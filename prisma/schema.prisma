@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum AppStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model CoreAppCode {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  secret      String   @db.Text
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  apps CoreApp[]
+
+  @@map("core_app_codes")
+}
+
+model CoreDomain {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  memberId  String   @unique @map("member_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  apps CoreApp[]
+
+  @@map("core_domains")
+}
+
+model CoreApp {
+  id          String    @id @default(cuid())
+  domainId    String    @map("domain_id")
+  appCodeId   String    @map("app_code_id")
+  email       String?
+  status      AppStatus @default(ACTIVE)
+  installedAt DateTime  @default(now()) @map("installed_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  domain      CoreDomain      @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  appCode     CoreAppCode     @relation(fields: [appCodeId], references: [id])
+  credentials CoreCredential?
+  setting     Setting?
+  instance    Instance?
+  d4signCredential D4SignCredential?
+  documents   Document[]
+  webhookLogs WebhookLog[]
+  auditLogs   AuditLog[]
+
+  @@unique([domainId, appCodeId])
+  @@map("core_apps")
+}
+
+model CoreCredential {
+  id           String   @id @default(cuid())
+  appId        String   @unique @map("app_id")
+  clientId     String   @map("client_id")
+  clientSecret String   @map("client_secret") @db.Text
+  accessToken  String?  @map("access_token") @db.Text
+  refreshToken String   @map("refresh_token") @db.Text
+  expiresAt    DateTime @map("expires_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  app CoreApp @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@map("core_credentials")
+}
+
+model Setting {
+  id              String   @id @default(cuid())
+  appId           String   @unique @map("app_id")
+  fields          String?  @db.Text
+  groups          String?  @db.Text
+  dealSettings    String?  @map("deal_settings") @db.Text
+  verifySettings  String?  @map("verify_settings") @db.Text
+  contactSettings String?  @map("contact_settings") @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  app CoreApp @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@map("settings")
+}
+
+model Instance {
+  id                          String   @id @default(cuid())
+  appId                       String   @unique @map("app_id")
+  urlEnviarDocumento          String?  @map("url_enviar_documento") @db.VarChar(2048)
+  urlEnviarDocumentoEnvelope  String?  @map("url_enviar_documento_envelope") @db.VarChar(2048)
+  urlCancelarDocumento        String?  @map("url_cancelar_documento") @db.VarChar(2048)
+  urlUpdateSubscriptionGroups String?  @map("url_update_subscription_groups") @db.VarChar(2048)
+  loadDocuments               String?  @map("load_documents") @db.VarChar(2048)
+  loadDocument                String?  @map("load_document") @db.VarChar(2048)
+  createdAt                   DateTime @default(now()) @map("created_at")
+  updatedAt                   DateTime @updatedAt @map("updated_at")
+
+  app CoreApp @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@map("instances")
+}
+
+model D4SignCredential {
+  id              String   @id @default(cuid())
+  appId           String   @unique @map("app_id")
+  tokenApi        String   @map("token_api") @db.Text
+  cryptKey        String?  @map("crypt_key") @db.Text
+  hmacSecret      String?  @map("hmac_secret") @db.Text
+  defaultSafeUuid String?  @map("default_safe_uuid")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  app CoreApp @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@map("d4sign_credentials")
+}
+
+model Document {
+  id             String   @id @default(cuid())
+  appId          String   @map("app_id")
+  uuidDoc        String   @unique @map("uuid_doc")
+  entityType     String   @map("entity_type")
+  entityId       String   @map("entity_id")
+  statusId       Int?     @map("status_id")
+  statusName     String?  @map("status_name") @db.VarChar(255)
+  rawLastPayload Json?    @map("raw_last_payload")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  app CoreApp @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@index([appId, entityType, entityId])
+  @@map("documents")
+}
+
+model WebhookLog {
+  id              String   @id @default(cuid())
+  appId           String?  @map("app_id")
+  source          String   @default("d4sign")
+  headersHash     String?  @map("headers_hash") @db.VarChar(128)
+  bodyJson        Json     @map("body_json")
+  verified        Boolean  @default(false)
+  processingError String?  @map("processing_error") @db.Text
+  receivedAt      DateTime @default(now()) @map("received_at")
+
+  app CoreApp? @relation(fields: [appId], references: [id], onDelete: SetNull)
+
+  @@index([receivedAt])
+  @@map("webhook_logs")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  appId     String?  @map("app_id")
+  actor     String
+  action    String
+  meta      Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  app CoreApp? @relation(fields: [appId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@map("audit_logs")
+}
