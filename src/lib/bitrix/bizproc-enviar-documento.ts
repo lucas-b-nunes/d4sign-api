@@ -20,7 +20,7 @@ function extractRobotCodes(result: unknown): string[] {
     .filter(Boolean);
 }
 
-/** Paridade com `reference-clicksign` BizprocEnviarDocumento::create */
+/** Robô BizProc para enviar documento via template D4Sign */
 export async function ensureBizprocEnviarDocumento(
   auth: AppAuth,
 ): Promise<void> {
@@ -35,59 +35,86 @@ export async function ensureBizprocEnviarDocumento(
   )) as { result?: unknown };
 
   const codes = extractRobotCodes(listRes?.result);
-  if (codes.includes("ENVIAR_DOCUMENTO")) return;
+
+  // Se existir o robô legado sem template, atualiza para a nova versão
+  if (codes.includes("ENVIAR_DOCUMENTO_D4SIGN")) {
+    await bitrixRestPostForm(auth.domain, auth.accessToken, "bizproc.robot.update", {
+      CODE: "ENVIAR_DOCUMENTO_D4SIGN",
+      HANDLER: handler,
+      NAME: { pt: "D4Sign — Enviar Documento", en: "D4Sign — Send Document" },
+      USE_SUBSCRIPTION: "Y",
+      PROPERTIES: buildProperties(),
+      FILTER: buildFilter(),
+    });
+    return;
+  }
 
   await bitrixRestPostForm(auth.domain, auth.accessToken, "bizproc.robot.add", {
-    CODE: "ENVIAR_DOCUMENTO",
+    CODE: "ENVIAR_DOCUMENTO_D4SIGN",
     HANDLER: handler,
-    NAME: { en: "Enviar documento" },
-    DESCRIPTION: { en: "Enviar documento para assinatura" },
-    PROPERTIES: {
-      token: {
-        Name: { en: "Envio do token" },
-        Description: {
-          en: "Tipo de autenticação para realizar assinatura",
-        },
-        Required: "Y",
-        Multiple: "N",
-        Default: "",
-        Type: "select",
-        Options: {
-          email: "Email",
-          sms: "SMS",
-          whatsapp: "Whatsapp",
-        },
-      },
-      sequencia: {
-        Name: { en: "Ativar sequencia" },
-        Description: { en: "Ativa sequencia de assinatura" },
-        Required: "Y",
-        Multiple: "N",
-        Default: "N",
-        Type: "select",
-        Options: { Y: "Sim", N: "Não" },
-      },
-      refusable: {
-        Name: { en: "Recusar documento?" },
-        Description: {
-          en: "Determina se o signatário pode recusar ou não a assinatura do documento.",
-        },
-        Required: "Y",
-        Multiple: "N",
-        Default: "N",
-        Type: "select",
-        Options: { Y: "Sim", N: "Não" },
-      },
-      envelope: {
-        Name: { en: "Criar envelope?" },
-        Description: { en: "Criar envelope e adiciona o documento!" },
-        Required: "Y",
-        Multiple: "N",
-        Default: "N",
-        Type: "select",
-        Options: { Y: "Sim", N: "Não" },
-      },
+    NAME: { pt: "D4Sign — Enviar Documento", en: "D4Sign — Send Document" },
+    DESCRIPTION: {
+      pt: "Gera e envia documento para assinatura via D4Sign usando um template configurado.",
+      en: "Generates and sends a document for signature via D4Sign using a configured template.",
     },
-    DOCUMENT_TYPE: ["crm", "CCrmDocumentLead", "LEAD"],
+    USE_SUBSCRIPTION: "Y",
+    PROPERTIES: buildProperties(),
+    FILTER: buildFilter(),
   });
+}
+
+function buildFilter() {
+  return {
+    INCLUDE: [
+      ["crm", "CCrmDocumentDeal"],
+      ["crm", "CCrmDocumentLead"],
+    ],
+  };
+}
+
+function buildProperties() {
+  return {
+    template_id: {
+      Name: { pt: "ID do Template D4Sign", en: "D4Sign Template ID" },
+      Description: {
+        pt: "ID do template configurado em Operação → Templates. Ex: MjAyOTQw",
+        en: "Template ID configured in Operation → Templates.",
+      },
+      Required: "Y",
+      Multiple: "N",
+      Default: "",
+      Type: "string",
+    },
+    document_name: {
+      Name: { pt: "Nome do Documento", en: "Document Name" },
+      Description: {
+        pt: "Nome que o documento receberá no D4Sign.",
+        en: "Name the document will receive in D4Sign.",
+      },
+      Required: "N",
+      Multiple: "N",
+      Default: "",
+      Type: "string",
+    },
+    signers_emails: {
+      Name: { pt: "E-mails dos Signatários", en: "Signers Emails" },
+      Description: {
+        pt: "E-mails dos signatários separados por vírgula. Ex: joao@empresa.com,maria@empresa.com",
+        en: "Signers emails separated by comma.",
+      },
+      Required: "Y",
+      Multiple: "N",
+      Default: "",
+      Type: "string",
+    },
+    envelope: {
+      Name: { pt: "Criar envelope?", en: "Create envelope?" },
+      Description: { pt: "Criar envelope e adiciona o documento.", en: "Create envelope and add document." },
+      Required: "Y",
+      Multiple: "N",
+      Default: "N",
+      Type: "select",
+      Options: { Y: "Sim", N: "Não" },
+    },
+  };
 }

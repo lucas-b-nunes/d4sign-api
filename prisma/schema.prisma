@@ -53,9 +53,10 @@ model CoreApp {
   setting     Setting?
   instance    Instance?
   d4signCredential D4SignCredential?
-  documents   Document[]
-  webhookLogs WebhookLog[]
-  auditLogs   AuditLog[]
+  documents        Document[]
+  webhookLogs      WebhookLog[]
+  auditLogs        AuditLog[]
+  templateMappings TemplateMapping[]
 
   @@unique([domainId, appCodeId])
   @@map("core_apps")
@@ -171,4 +172,19 @@ model AuditLog {
 
   @@index([createdAt])
   @@map("audit_logs")
+}
+
+model TemplateMapping {
+  id           String   @id @default(cuid())
+  appId        String   @map("app_id")
+  templateId   String   @map("template_id")
+  templateName String   @map("template_name")
+  mappings     Json
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  app CoreApp @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@unique([appId, templateId])
+  @@map("template_mappings")
 }

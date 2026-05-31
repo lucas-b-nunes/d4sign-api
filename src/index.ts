@@ -20,6 +20,13 @@ import {
   handleGetTenantDocuments,
   handleResolveTenant,
 } from "@/routes/tenants";
+import {
+  handleListSafes,
+  handleSetDefaultSafe,
+  handleListTemplates,
+  handleGetTemplateMappings,
+  handleUpsertTemplateMapping,
+} from "@/routes/d4sign-catalog";
 
 const app = new Hono();
 
@@ -63,6 +70,12 @@ app.post("/api/webhooks/d4sign", handleD4SignWebhook);
 app.get("/api/tenants/by-domain", handleResolveTenant);
 app.get("/api/tenants/:memberId", handleGetTenant);
 app.get("/api/tenants/:memberId/documents", handleGetTenantDocuments);
+
+app.get("/api/d4sign/safes", handleListSafes);
+app.put("/api/d4sign/safes/default", handleSetDefaultSafe);
+app.get("/api/d4sign/templates", handleListTemplates);
+app.get("/api/d4sign/template-mappings", handleGetTemplateMappings);
+app.put("/api/d4sign/template-mappings/:templateId", handleUpsertTemplateMapping);
 
 const port = Number(process.env.PORT ?? 3001);
 console.log(`d4sign-api listening on http://127.0.0.1:${port}`);

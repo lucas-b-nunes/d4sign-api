@@ -7,8 +7,16 @@ import {
   prismaticEnviarDocumento,
   prismaticUpdateSubscriptionGroups,
 } from "@/lib/integration/prismatic";
-import { refreshBitrixToken } from "@/lib/bitrix/bitrix24";
+import { refreshBitrixToken, bitrixRestGet } from "@/lib/bitrix/bitrix24";
 import { findTenantByMemberId, getFirstApp, toAppAuth } from "@/lib/tenant";
+import {
+  d4signBuildFromTemplate,
+  d4signConfigureWebhook,
+  d4signAddSigners,
+  d4signSendToSigner,
+  type D4SignClientConfig,
+} from "@/lib/d4sign/client";
+import { getPublicAppUrl } from "@/lib/env";
 
 const FLOWS: Record<string, "urlEnviarDocumentoEnvelope" | "urlEnviarDocumento"> =
   {
@@ -32,6 +40,37 @@ async function resolveAppByMemberId(memberId: string) {
   const app = getFirstApp(tenant);
   if (!app) return null;
   return { domain: tenant, app };
+}
+
+/** Busca campos de uma entidade CRM no Bitrix (deal ou lead) */
+async function fetchCrmEntity(
+  domain: string,
+  accessToken: string,
+  entityType: string,
+  entityId: string,
+): Promise<Record<string, unknown>> {
+  const method = entityType === "lead" ? "crm.lead.get" : "crm.deal.get";
+  const result = (await bitrixRestGet(domain, accessToken, method, {
+    id: entityId,
+  })) as { result?: Record<string, unknown> };
+  return result?.result ?? {};
+}
+
+/**
+ * Resolve as variáveis do template substituindo caminhos de campo CRM pelos valores reais.
+ * mappings: { "nome_completo": "CONTACT_NAME", "razao_social": "COMPANY_TITLE" }
+ * crmData: campos da entidade Bitrix
+ */
+function resolveTemplateVariables(
+  mappings: Record<string, string>,
+  crmData: Record<string, unknown>,
+): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const [templateVar, crmField] of Object.entries(mappings)) {
+    const value = crmData[crmField];
+    result[templateVar] = value != null ? String(value) : "";
+  }
+  return result;
 }
 
 export async function handleEnviarDocumento(c: Context) {
@@ -70,11 +109,9 @@ export async function handleEnviarDocumento(c: Context) {
   }
 
   const instance = app.instance;
-  if (!instance) {
-    return c.json({ error: "instance_missing" }, 500);
-  }
 
   if (usePrismaticBridge()) {
+    if (!instance) return c.json({ error: "instance_missing" }, 500);
     try {
       await prismaticEnviarDocumento(urlKey, instance, {
         member_id: domain.memberId,
@@ -88,16 +125,146 @@ export async function handleEnviarDocumento(c: Context) {
       return c.json({ error: msg }, 502);
     }
   } else {
+    // Fluxo D4Sign nativo
+    const d4cred = app.d4signCredential;
+    if (!d4cred) {
+      return c.json({ error: "d4sign_credentials_missing" }, 500);
+    }
+
+    const templateId = dataGet(body, "properties.template_id");
+    const signersEmailsRaw = dataGet(body, "properties.signers_emails");
+    const documentName =
+      (dataGet(body, "properties.document_name") as string | undefined) ??
+      `Documento ${entity} ${entityId}`;
+
+    if (!templateId || typeof templateId !== "string") {
+      return c.json({ error: "properties.template_id obrigatório" }, 400);
+    }
+
+    const safeUuid = d4cred.defaultSafeUuid;
+    if (!safeUuid) {
+      return c.json({ error: "Cofre padrão não configurado. Acesse Configurações → Globais." }, 400);
+    }
+
+    // Buscar mapeamento do template
+    const mapping = await prisma.templateMapping.findUnique({
+      where: { appId_templateId: { appId: app.id, templateId } },
+    });
+    if (!mapping) {
+      return c.json({
+        error: `Mapeamento do template "${templateId}" não encontrado. Configure em Operação → Templates.`,
+      }, 400);
+    }
+
+    // Obter access token válido
+    const cred = app.credentials;
+    let accessToken = cred?.accessToken ?? "";
+    if (cred) {
+      const tok = await refreshBitrixToken({
+        clientId: cred.clientId,
+        clientSecret: cred.clientSecret,
+        refreshToken: cred.refreshToken,
+      });
+      if (tok?.access_token) {
+        accessToken = tok.access_token;
+        await prisma.coreCredential.update({
+          where: { appId: app.id },
+          data: {
+            accessToken: tok.access_token,
+            refreshToken: tok.refresh_token ?? cred.refreshToken,
+          },
+        });
+      }
+    }
+
+    // Buscar dados da entidade CRM
+    const crmData = await fetchCrmEntity(domain.name, accessToken, entity, entityId);
+
+    // Resolver variáveis do template a partir do mapeamento salvo
+    const rawMappings = mapping.mappings as Record<string, string>;
+    const resolvedVars = resolveTemplateVariables(rawMappings, crmData);
+
+    // Montar payload do template (separar preenchedor dos tokens_gerais se necessário)
+    const templatePayload: Record<string, unknown> = { ...resolvedVars };
+
+    const d4config: D4SignClientConfig = {
+      tokenApi: d4cred.tokenApi,
+      cryptKey: d4cred.cryptKey,
+    };
+
+    let uuidDoc: string;
+    try {
+      const buildResult = await d4signBuildFromTemplate(
+        d4config,
+        safeUuid,
+        documentName,
+        { [templateId]: templatePayload },
+      );
+      uuidDoc = buildResult.uuid;
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      await prisma.auditLog.create({
+        data: { appId: app.id, actor: "bizproc", action: "d4sign_build_error", meta: { error: msg, entity, entity_id: entityId } },
+      });
+      return c.json({ error: `Erro ao criar documento: ${msg}` }, 502);
+    }
+
+    // Configurar webhook no documento
+    const webhookUrl = `${(getPublicAppUrl() ?? "").replace(/\/$/, "")}/api/webhooks/d4sign`;
+    try {
+      await d4signConfigureWebhook(d4config, uuidDoc, webhookUrl);
+    } catch {
+      // Não fatal — continua o fluxo
+    }
+
+    // Adicionar signatários
+    const emails: string[] =
+      typeof signersEmailsRaw === "string"
+        ? signersEmailsRaw.split(",").map((e) => e.trim()).filter(Boolean)
+        : [];
+
+    if (emails.length > 0) {
+      const signers = emails.map((email) => ({
+        email,
+        act: "1",
+        foreign: "0",
+        certificadoicpbr: "0",
+        assinatura_presencial: "0",
+      }));
+      try {
+        await d4signAddSigners(d4config, uuidDoc, signers);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        return c.json({ error: `Erro ao adicionar signatários: ${msg}` }, 502);
+      }
+
+      // Enviar para assinar
+      try {
+        await d4signSendToSigner(d4config, uuidDoc);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        return c.json({ error: `Erro ao enviar para assinatura: ${msg}` }, 502);
+      }
+    }
+
+    // Persistir documento no banco
+    await prisma.document.upsert({
+      where: { uuidDoc },
+      create: { appId: app.id, uuidDoc, entityType: entity, entityId, statusName: "Aguardando Assinaturas", statusId: 3 },
+      update: { statusName: "Aguardando Assinaturas", statusId: 3 },
+    });
+
     await prisma.auditLog.create({
       data: {
         appId: app.id,
         actor: "bizproc",
-        action: "enviar_documento_queued",
-        meta: { entity, entity_id: entityId, envelope },
+        action: "enviar_documento_d4sign",
+        meta: { uuidDoc, entity, entity_id: entityId, templateId },
       },
     });
   }
 
+  // Sinalizar o workflow Bitrix para continuar (USE_SUBSCRIPTION=Y)
   if (body.use_subscription === "Y") {
     const cred = app.credentials;
     if (cred) {
