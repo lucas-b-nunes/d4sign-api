@@ -27,6 +27,7 @@ import {
   handleGetTemplateMappings,
   handleUpsertTemplateMapping,
 } from "@/routes/d4sign-catalog";
+import { handleGetDealFields } from "@/routes/bitrix-crm";
 
 const app = new Hono();
 
@@ -76,6 +77,8 @@ app.put("/api/d4sign/safes/default", handleSetDefaultSafe);
 app.get("/api/d4sign/templates", handleListTemplates);
 app.get("/api/d4sign/template-mappings", handleGetTemplateMappings);
 app.put("/api/d4sign/template-mappings/:templateId", handleUpsertTemplateMapping);
+
+app.get("/api/bitrix/deal-fields", handleGetDealFields);
 
 const port = Number(process.env.PORT ?? 3001);
 console.log(`d4sign-api listening on http://127.0.0.1:${port}`);
