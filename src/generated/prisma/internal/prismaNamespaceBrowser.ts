@@ -60,7 +60,8 @@ export const ModelName = {
   D4SignCredential: 'D4SignCredential',
   Document: 'Document',
   WebhookLog: 'WebhookLog',
-  AuditLog: 'AuditLog'
+  AuditLog: 'AuditLog',
+  TemplateMapping: 'TemplateMapping'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -216,6 +217,19 @@ export const AuditLogScalarFieldEnum = {
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+export const TemplateMappingScalarFieldEnum = {
+  id: 'id',
+  appId: 'appId',
+  templateId: 'templateId',
+  templateName: 'templateName',
+  mappings: 'mappings',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TemplateMappingScalarFieldEnum = (typeof TemplateMappingScalarFieldEnum)[keyof typeof TemplateMappingScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -378,4 +392,14 @@ export const AuditLogOrderByRelevanceFieldEnum = {
 } as const
 
 export type AuditLogOrderByRelevanceFieldEnum = (typeof AuditLogOrderByRelevanceFieldEnum)[keyof typeof AuditLogOrderByRelevanceFieldEnum]
+
+
+export const TemplateMappingOrderByRelevanceFieldEnum = {
+  id: 'id',
+  appId: 'appId',
+  templateId: 'templateId',
+  templateName: 'templateName'
+} as const
+
+export type TemplateMappingOrderByRelevanceFieldEnum = (typeof TemplateMappingOrderByRelevanceFieldEnum)[keyof typeof TemplateMappingOrderByRelevanceFieldEnum]
 

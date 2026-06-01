@@ -67,3 +67,8 @@ export type WebhookLog = Prisma.WebhookLogModel
  * 
  */
 export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model TemplateMapping
+ * 
+ */
+export type TemplateMapping = Prisma.TemplateMappingModel

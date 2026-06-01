@@ -393,7 +393,8 @@ export const ModelName = {
   D4SignCredential: 'D4SignCredential',
   Document: 'Document',
   WebhookLog: 'WebhookLog',
-  AuditLog: 'AuditLog'
+  AuditLog: 'AuditLog',
+  TemplateMapping: 'TemplateMapping'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -409,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "coreAppCode" | "coreDomain" | "coreApp" | "coreCredential" | "setting" | "instance" | "d4SignCredential" | "document" | "webhookLog" | "auditLog"
+    modelProps: "coreAppCode" | "coreDomain" | "coreApp" | "coreCredential" | "setting" | "instance" | "d4SignCredential" | "document" | "webhookLog" | "auditLog" | "templateMapping"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1073,6 +1074,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TemplateMapping: {
+      payload: Prisma.$TemplateMappingPayload<ExtArgs>
+      fields: Prisma.TemplateMappingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TemplateMappingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TemplateMappingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TemplateMappingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TemplateMappingPayload>
+        }
+        findFirst: {
+          args: Prisma.TemplateMappingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TemplateMappingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TemplateMappingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TemplateMappingPayload>
+        }
+        findMany: {
+          args: Prisma.TemplateMappingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TemplateMappingPayload>[]
+        }
+        create: {
+          args: Prisma.TemplateMappingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TemplateMappingPayload>
+        }
+        createMany: {
+          args: Prisma.TemplateMappingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.TemplateMappingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TemplateMappingPayload>
+        }
+        update: {
+          args: Prisma.TemplateMappingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TemplateMappingPayload>
+        }
+        deleteMany: {
+          args: Prisma.TemplateMappingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TemplateMappingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.TemplateMappingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TemplateMappingPayload>
+        }
+        aggregate: {
+          args: Prisma.TemplateMappingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTemplateMapping>
+        }
+        groupBy: {
+          args: Prisma.TemplateMappingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TemplateMappingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TemplateMappingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TemplateMappingCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1251,6 +1318,19 @@ export const AuditLogScalarFieldEnum = {
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
 
 
+export const TemplateMappingScalarFieldEnum = {
+  id: 'id',
+  appId: 'appId',
+  templateId: 'templateId',
+  templateName: 'templateName',
+  mappings: 'mappings',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TemplateMappingScalarFieldEnum = (typeof TemplateMappingScalarFieldEnum)[keyof typeof TemplateMappingScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1411,6 +1491,16 @@ export const AuditLogOrderByRelevanceFieldEnum = {
 } as const
 
 export type AuditLogOrderByRelevanceFieldEnum = (typeof AuditLogOrderByRelevanceFieldEnum)[keyof typeof AuditLogOrderByRelevanceFieldEnum]
+
+
+export const TemplateMappingOrderByRelevanceFieldEnum = {
+  id: 'id',
+  appId: 'appId',
+  templateId: 'templateId',
+  templateName: 'templateName'
+} as const
+
+export type TemplateMappingOrderByRelevanceFieldEnum = (typeof TemplateMappingOrderByRelevanceFieldEnum)[keyof typeof TemplateMappingOrderByRelevanceFieldEnum]
 
 
 
@@ -1594,6 +1684,7 @@ export type GlobalOmitConfig = {
   document?: Prisma.DocumentOmit
   webhookLog?: Prisma.WebhookLogOmit
   auditLog?: Prisma.AuditLogOmit
+  templateMapping?: Prisma.TemplateMappingOmit
 }
 
 /* Types for Logging */

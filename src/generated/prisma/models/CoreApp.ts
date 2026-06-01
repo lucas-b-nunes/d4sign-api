@@ -207,6 +207,7 @@ export type CoreAppWhereInput = {
   documents?: Prisma.DocumentListRelationFilter
   webhookLogs?: Prisma.WebhookLogListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  templateMappings?: Prisma.TemplateMappingListRelationFilter
 }
 
 export type CoreAppOrderByWithRelationInput = {
@@ -226,6 +227,7 @@ export type CoreAppOrderByWithRelationInput = {
   documents?: Prisma.DocumentOrderByRelationAggregateInput
   webhookLogs?: Prisma.WebhookLogOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
+  templateMappings?: Prisma.TemplateMappingOrderByRelationAggregateInput
   _relevance?: Prisma.CoreAppOrderByRelevanceInput
 }
 
@@ -250,6 +252,7 @@ export type CoreAppWhereUniqueInput = Prisma.AtLeast<{
   documents?: Prisma.DocumentListRelationFilter
   webhookLogs?: Prisma.WebhookLogListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  templateMappings?: Prisma.TemplateMappingListRelationFilter
 }, "id" | "domainId_appCodeId">
 
 export type CoreAppOrderByWithAggregationInput = {
@@ -293,6 +296,7 @@ export type CoreAppCreateInput = {
   documents?: Prisma.DocumentCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUncheckedCreateInput = {
@@ -310,6 +314,7 @@ export type CoreAppUncheckedCreateInput = {
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingUncheckedCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUpdateInput = {
@@ -327,6 +332,7 @@ export type CoreAppUpdateInput = {
   documents?: Prisma.DocumentUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateInput = {
@@ -344,6 +350,7 @@ export type CoreAppUncheckedUpdateInput = {
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUncheckedUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppCreateManyInput = {
@@ -625,6 +632,20 @@ export type CoreAppUpdateOneWithoutAuditLogsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CoreAppUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.CoreAppUpdateWithoutAuditLogsInput>, Prisma.CoreAppUncheckedUpdateWithoutAuditLogsInput>
 }
 
+export type CoreAppCreateNestedOneWithoutTemplateMappingsInput = {
+  create?: Prisma.XOR<Prisma.CoreAppCreateWithoutTemplateMappingsInput, Prisma.CoreAppUncheckedCreateWithoutTemplateMappingsInput>
+  connectOrCreate?: Prisma.CoreAppCreateOrConnectWithoutTemplateMappingsInput
+  connect?: Prisma.CoreAppWhereUniqueInput
+}
+
+export type CoreAppUpdateOneRequiredWithoutTemplateMappingsNestedInput = {
+  create?: Prisma.XOR<Prisma.CoreAppCreateWithoutTemplateMappingsInput, Prisma.CoreAppUncheckedCreateWithoutTemplateMappingsInput>
+  connectOrCreate?: Prisma.CoreAppCreateOrConnectWithoutTemplateMappingsInput
+  upsert?: Prisma.CoreAppUpsertWithoutTemplateMappingsInput
+  connect?: Prisma.CoreAppWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CoreAppUpdateToOneWithWhereWithoutTemplateMappingsInput, Prisma.CoreAppUpdateWithoutTemplateMappingsInput>, Prisma.CoreAppUncheckedUpdateWithoutTemplateMappingsInput>
+}
+
 export type CoreAppCreateWithoutAppCodeInput = {
   id?: string
   email?: string | null
@@ -639,6 +660,7 @@ export type CoreAppCreateWithoutAppCodeInput = {
   documents?: Prisma.DocumentCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUncheckedCreateWithoutAppCodeInput = {
@@ -655,6 +677,7 @@ export type CoreAppUncheckedCreateWithoutAppCodeInput = {
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingUncheckedCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppCreateOrConnectWithoutAppCodeInput = {
@@ -710,6 +733,7 @@ export type CoreAppCreateWithoutDomainInput = {
   documents?: Prisma.DocumentCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUncheckedCreateWithoutDomainInput = {
@@ -726,6 +750,7 @@ export type CoreAppUncheckedCreateWithoutDomainInput = {
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingUncheckedCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppCreateOrConnectWithoutDomainInput = {
@@ -768,6 +793,7 @@ export type CoreAppCreateWithoutCredentialsInput = {
   documents?: Prisma.DocumentCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUncheckedCreateWithoutCredentialsInput = {
@@ -784,6 +810,7 @@ export type CoreAppUncheckedCreateWithoutCredentialsInput = {
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingUncheckedCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppCreateOrConnectWithoutCredentialsInput = {
@@ -816,6 +843,7 @@ export type CoreAppUpdateWithoutCredentialsInput = {
   documents?: Prisma.DocumentUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateWithoutCredentialsInput = {
@@ -832,6 +860,7 @@ export type CoreAppUncheckedUpdateWithoutCredentialsInput = {
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUncheckedUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppCreateWithoutSettingInput = {
@@ -848,6 +877,7 @@ export type CoreAppCreateWithoutSettingInput = {
   documents?: Prisma.DocumentCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUncheckedCreateWithoutSettingInput = {
@@ -864,6 +894,7 @@ export type CoreAppUncheckedCreateWithoutSettingInput = {
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingUncheckedCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppCreateOrConnectWithoutSettingInput = {
@@ -896,6 +927,7 @@ export type CoreAppUpdateWithoutSettingInput = {
   documents?: Prisma.DocumentUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateWithoutSettingInput = {
@@ -912,6 +944,7 @@ export type CoreAppUncheckedUpdateWithoutSettingInput = {
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUncheckedUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppCreateWithoutInstanceInput = {
@@ -928,6 +961,7 @@ export type CoreAppCreateWithoutInstanceInput = {
   documents?: Prisma.DocumentCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUncheckedCreateWithoutInstanceInput = {
@@ -944,6 +978,7 @@ export type CoreAppUncheckedCreateWithoutInstanceInput = {
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingUncheckedCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppCreateOrConnectWithoutInstanceInput = {
@@ -976,6 +1011,7 @@ export type CoreAppUpdateWithoutInstanceInput = {
   documents?: Prisma.DocumentUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateWithoutInstanceInput = {
@@ -992,6 +1028,7 @@ export type CoreAppUncheckedUpdateWithoutInstanceInput = {
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUncheckedUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppCreateWithoutD4signCredentialInput = {
@@ -1008,6 +1045,7 @@ export type CoreAppCreateWithoutD4signCredentialInput = {
   documents?: Prisma.DocumentCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUncheckedCreateWithoutD4signCredentialInput = {
@@ -1024,6 +1062,7 @@ export type CoreAppUncheckedCreateWithoutD4signCredentialInput = {
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingUncheckedCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppCreateOrConnectWithoutD4signCredentialInput = {
@@ -1056,6 +1095,7 @@ export type CoreAppUpdateWithoutD4signCredentialInput = {
   documents?: Prisma.DocumentUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateWithoutD4signCredentialInput = {
@@ -1072,6 +1112,7 @@ export type CoreAppUncheckedUpdateWithoutD4signCredentialInput = {
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUncheckedUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppCreateWithoutDocumentsInput = {
@@ -1088,6 +1129,7 @@ export type CoreAppCreateWithoutDocumentsInput = {
   d4signCredential?: Prisma.D4SignCredentialCreateNestedOneWithoutAppInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUncheckedCreateWithoutDocumentsInput = {
@@ -1104,6 +1146,7 @@ export type CoreAppUncheckedCreateWithoutDocumentsInput = {
   d4signCredential?: Prisma.D4SignCredentialUncheckedCreateNestedOneWithoutAppInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingUncheckedCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppCreateOrConnectWithoutDocumentsInput = {
@@ -1136,6 +1179,7 @@ export type CoreAppUpdateWithoutDocumentsInput = {
   d4signCredential?: Prisma.D4SignCredentialUpdateOneWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateWithoutDocumentsInput = {
@@ -1152,6 +1196,7 @@ export type CoreAppUncheckedUpdateWithoutDocumentsInput = {
   d4signCredential?: Prisma.D4SignCredentialUncheckedUpdateOneWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUncheckedUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppCreateWithoutWebhookLogsInput = {
@@ -1168,6 +1213,7 @@ export type CoreAppCreateWithoutWebhookLogsInput = {
   d4signCredential?: Prisma.D4SignCredentialCreateNestedOneWithoutAppInput
   documents?: Prisma.DocumentCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUncheckedCreateWithoutWebhookLogsInput = {
@@ -1184,6 +1230,7 @@ export type CoreAppUncheckedCreateWithoutWebhookLogsInput = {
   d4signCredential?: Prisma.D4SignCredentialUncheckedCreateNestedOneWithoutAppInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutAppInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingUncheckedCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppCreateOrConnectWithoutWebhookLogsInput = {
@@ -1216,6 +1263,7 @@ export type CoreAppUpdateWithoutWebhookLogsInput = {
   d4signCredential?: Prisma.D4SignCredentialUpdateOneWithoutAppNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateWithoutWebhookLogsInput = {
@@ -1232,6 +1280,7 @@ export type CoreAppUncheckedUpdateWithoutWebhookLogsInput = {
   d4signCredential?: Prisma.D4SignCredentialUncheckedUpdateOneWithoutAppNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUncheckedUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppCreateWithoutAuditLogsInput = {
@@ -1248,6 +1297,7 @@ export type CoreAppCreateWithoutAuditLogsInput = {
   d4signCredential?: Prisma.D4SignCredentialCreateNestedOneWithoutAppInput
   documents?: Prisma.DocumentCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppUncheckedCreateWithoutAuditLogsInput = {
@@ -1264,6 +1314,7 @@ export type CoreAppUncheckedCreateWithoutAuditLogsInput = {
   d4signCredential?: Prisma.D4SignCredentialUncheckedCreateNestedOneWithoutAppInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutAppInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutAppInput
+  templateMappings?: Prisma.TemplateMappingUncheckedCreateNestedManyWithoutAppInput
 }
 
 export type CoreAppCreateOrConnectWithoutAuditLogsInput = {
@@ -1296,6 +1347,7 @@ export type CoreAppUpdateWithoutAuditLogsInput = {
   d4signCredential?: Prisma.D4SignCredentialUpdateOneWithoutAppNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateWithoutAuditLogsInput = {
@@ -1312,6 +1364,91 @@ export type CoreAppUncheckedUpdateWithoutAuditLogsInput = {
   d4signCredential?: Prisma.D4SignCredentialUncheckedUpdateOneWithoutAppNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUncheckedUpdateManyWithoutAppNestedInput
+}
+
+export type CoreAppCreateWithoutTemplateMappingsInput = {
+  id?: string
+  email?: string | null
+  status?: $Enums.AppStatus
+  installedAt?: Date | string
+  updatedAt?: Date | string
+  domain: Prisma.CoreDomainCreateNestedOneWithoutAppsInput
+  appCode: Prisma.CoreAppCodeCreateNestedOneWithoutAppsInput
+  credentials?: Prisma.CoreCredentialCreateNestedOneWithoutAppInput
+  setting?: Prisma.SettingCreateNestedOneWithoutAppInput
+  instance?: Prisma.InstanceCreateNestedOneWithoutAppInput
+  d4signCredential?: Prisma.D4SignCredentialCreateNestedOneWithoutAppInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutAppInput
+  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutAppInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutAppInput
+}
+
+export type CoreAppUncheckedCreateWithoutTemplateMappingsInput = {
+  id?: string
+  domainId: string
+  appCodeId: string
+  email?: string | null
+  status?: $Enums.AppStatus
+  installedAt?: Date | string
+  updatedAt?: Date | string
+  credentials?: Prisma.CoreCredentialUncheckedCreateNestedOneWithoutAppInput
+  setting?: Prisma.SettingUncheckedCreateNestedOneWithoutAppInput
+  instance?: Prisma.InstanceUncheckedCreateNestedOneWithoutAppInput
+  d4signCredential?: Prisma.D4SignCredentialUncheckedCreateNestedOneWithoutAppInput
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutAppInput
+  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutAppInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutAppInput
+}
+
+export type CoreAppCreateOrConnectWithoutTemplateMappingsInput = {
+  where: Prisma.CoreAppWhereUniqueInput
+  create: Prisma.XOR<Prisma.CoreAppCreateWithoutTemplateMappingsInput, Prisma.CoreAppUncheckedCreateWithoutTemplateMappingsInput>
+}
+
+export type CoreAppUpsertWithoutTemplateMappingsInput = {
+  update: Prisma.XOR<Prisma.CoreAppUpdateWithoutTemplateMappingsInput, Prisma.CoreAppUncheckedUpdateWithoutTemplateMappingsInput>
+  create: Prisma.XOR<Prisma.CoreAppCreateWithoutTemplateMappingsInput, Prisma.CoreAppUncheckedCreateWithoutTemplateMappingsInput>
+  where?: Prisma.CoreAppWhereInput
+}
+
+export type CoreAppUpdateToOneWithWhereWithoutTemplateMappingsInput = {
+  where?: Prisma.CoreAppWhereInput
+  data: Prisma.XOR<Prisma.CoreAppUpdateWithoutTemplateMappingsInput, Prisma.CoreAppUncheckedUpdateWithoutTemplateMappingsInput>
+}
+
+export type CoreAppUpdateWithoutTemplateMappingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumAppStatusFieldUpdateOperationsInput | $Enums.AppStatus
+  installedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  domain?: Prisma.CoreDomainUpdateOneRequiredWithoutAppsNestedInput
+  appCode?: Prisma.CoreAppCodeUpdateOneRequiredWithoutAppsNestedInput
+  credentials?: Prisma.CoreCredentialUpdateOneWithoutAppNestedInput
+  setting?: Prisma.SettingUpdateOneWithoutAppNestedInput
+  instance?: Prisma.InstanceUpdateOneWithoutAppNestedInput
+  d4signCredential?: Prisma.D4SignCredentialUpdateOneWithoutAppNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutAppNestedInput
+  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutAppNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutAppNestedInput
+}
+
+export type CoreAppUncheckedUpdateWithoutTemplateMappingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  domainId?: Prisma.StringFieldUpdateOperationsInput | string
+  appCodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumAppStatusFieldUpdateOperationsInput | $Enums.AppStatus
+  installedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  credentials?: Prisma.CoreCredentialUncheckedUpdateOneWithoutAppNestedInput
+  setting?: Prisma.SettingUncheckedUpdateOneWithoutAppNestedInput
+  instance?: Prisma.InstanceUncheckedUpdateOneWithoutAppNestedInput
+  d4signCredential?: Prisma.D4SignCredentialUncheckedUpdateOneWithoutAppNestedInput
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutAppNestedInput
+  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutAppNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppCreateManyAppCodeInput = {
@@ -1337,6 +1474,7 @@ export type CoreAppUpdateWithoutAppCodeInput = {
   documents?: Prisma.DocumentUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateWithoutAppCodeInput = {
@@ -1353,6 +1491,7 @@ export type CoreAppUncheckedUpdateWithoutAppCodeInput = {
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUncheckedUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateManyWithoutAppCodeInput = {
@@ -1387,6 +1526,7 @@ export type CoreAppUpdateWithoutDomainInput = {
   documents?: Prisma.DocumentUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateWithoutDomainInput = {
@@ -1403,6 +1543,7 @@ export type CoreAppUncheckedUpdateWithoutDomainInput = {
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutAppNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutAppNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutAppNestedInput
+  templateMappings?: Prisma.TemplateMappingUncheckedUpdateManyWithoutAppNestedInput
 }
 
 export type CoreAppUncheckedUpdateManyWithoutDomainInput = {
@@ -1423,12 +1564,14 @@ export type CoreAppCountOutputType = {
   documents: number
   webhookLogs: number
   auditLogs: number
+  templateMappings: number
 }
 
 export type CoreAppCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   documents?: boolean | CoreAppCountOutputTypeCountDocumentsArgs
   webhookLogs?: boolean | CoreAppCountOutputTypeCountWebhookLogsArgs
   auditLogs?: boolean | CoreAppCountOutputTypeCountAuditLogsArgs
+  templateMappings?: boolean | CoreAppCountOutputTypeCountTemplateMappingsArgs
 }
 
 /**
@@ -1462,6 +1605,13 @@ export type CoreAppCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.AuditLogWhereInput
 }
 
+/**
+ * CoreAppCountOutputType without action
+ */
+export type CoreAppCountOutputTypeCountTemplateMappingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TemplateMappingWhereInput
+}
+
 
 export type CoreAppSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1480,6 +1630,7 @@ export type CoreAppSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   documents?: boolean | Prisma.CoreApp$documentsArgs<ExtArgs>
   webhookLogs?: boolean | Prisma.CoreApp$webhookLogsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.CoreApp$auditLogsArgs<ExtArgs>
+  templateMappings?: boolean | Prisma.CoreApp$templateMappingsArgs<ExtArgs>
   _count?: boolean | Prisma.CoreAppCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["coreApp"]>
 
@@ -1506,6 +1657,7 @@ export type CoreAppInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   documents?: boolean | Prisma.CoreApp$documentsArgs<ExtArgs>
   webhookLogs?: boolean | Prisma.CoreApp$webhookLogsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.CoreApp$auditLogsArgs<ExtArgs>
+  templateMappings?: boolean | Prisma.CoreApp$templateMappingsArgs<ExtArgs>
   _count?: boolean | Prisma.CoreAppCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -1521,6 +1673,7 @@ export type $CoreAppPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     documents: Prisma.$DocumentPayload<ExtArgs>[]
     webhookLogs: Prisma.$WebhookLogPayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+    templateMappings: Prisma.$TemplateMappingPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1879,6 +2032,7 @@ export interface Prisma__CoreAppClient<T, Null = never, ExtArgs extends runtime.
   documents<T extends Prisma.CoreApp$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CoreApp$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webhookLogs<T extends Prisma.CoreApp$webhookLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CoreApp$webhookLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.CoreApp$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CoreApp$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  templateMappings<T extends Prisma.CoreApp$templateMappingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CoreApp$templateMappingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TemplateMappingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2408,6 +2562,30 @@ export type CoreApp$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
+}
+
+/**
+ * CoreApp.templateMappings
+ */
+export type CoreApp$templateMappingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TemplateMapping
+   */
+  select?: Prisma.TemplateMappingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TemplateMapping
+   */
+  omit?: Prisma.TemplateMappingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TemplateMappingInclude<ExtArgs> | null
+  where?: Prisma.TemplateMappingWhereInput
+  orderBy?: Prisma.TemplateMappingOrderByWithRelationInput | Prisma.TemplateMappingOrderByWithRelationInput[]
+  cursor?: Prisma.TemplateMappingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TemplateMappingScalarFieldEnum | Prisma.TemplateMappingScalarFieldEnum[]
 }
 
 /**
