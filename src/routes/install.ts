@@ -138,7 +138,17 @@ export async function handleInstall(c: Context) {
     cancelHandler,
   );
 
-  await ensureBizprocEnviarDocumento(auth);
+  // Buscar templates já mapeados para popular o select do robô
+  const existingMappings = await prisma.templateMapping.findMany({
+    where: { appId: coreApp.id },
+    orderBy: { templateName: "asc" },
+  });
+  const templateOptions: Record<string, string> = {};
+  for (const m of existingMappings) {
+    templateOptions[m.templateId] = m.templateName;
+  }
+
+  await ensureBizprocEnviarDocumento(auth, templateOptions);
   await ensureSignerContactField(auth);
 
   return c.html(installFinishHtml(), 200);

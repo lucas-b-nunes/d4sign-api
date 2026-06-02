@@ -102,6 +102,8 @@ export async function handleUpsertTemplateMapping(c: Context) {
   const body = await c.req.json<{
     templateName: string;
     mappings: Record<string, unknown>;
+    documentName?: string;
+    signersEmails?: string[];
   }>();
 
   if (!body.templateName) return c.json({ error: "templateName required" }, 400);
@@ -117,10 +119,14 @@ export async function handleUpsertTemplateMapping(c: Context) {
       templateId,
       templateName: body.templateName,
       mappings: body.mappings,
+      documentName: body.documentName ?? null,
+      signersEmails: body.signersEmails ?? [],
     },
     update: {
       templateName: body.templateName,
       mappings: body.mappings,
+      ...(body.documentName !== undefined ? { documentName: body.documentName } : {}),
+      ...(body.signersEmails !== undefined ? { signersEmails: body.signersEmails } : {}),
     },
   });
 

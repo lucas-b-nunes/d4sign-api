@@ -20,9 +20,14 @@ function extractRobotCodes(result: unknown): string[] {
     .filter(Boolean);
 }
 
-/** Robô BizProc para enviar documento via template D4Sign */
+/**
+ * Registra ou atualiza o robô BizProc "ENVIAR_DOCUMENTO_D4SIGN".
+ * @param templateOptions Mapa { templateId: templateName } dos templates já mapeados.
+ *                        Vazio na primeira instalação; sincronize depois via /api/bitrix/sync-robot.
+ */
 export async function ensureBizprocEnviarDocumento(
   auth: AppAuth,
+  templateOptions: Record<string, string> = {},
 ): Promise<void> {
   const base = getPublicAppUrl();
   if (!base) throw new Error("PUBLIC_APP_URL ausente");
@@ -35,16 +40,17 @@ export async function ensureBizprocEnviarDocumento(
   )) as { result?: unknown };
 
   const codes = extractRobotCodes(listRes?.result);
+  const properties = buildProperties(templateOptions);
+  const filter = buildFilter();
 
-  // Se existir o robô legado sem template, atualiza para a nova versão
   if (codes.includes("ENVIAR_DOCUMENTO_D4SIGN")) {
     await bitrixRestPostForm(auth.domain, auth.accessToken, "bizproc.robot.update", {
       CODE: "ENVIAR_DOCUMENTO_D4SIGN",
       HANDLER: handler,
       NAME: { pt: "D4Sign — Enviar Documento", en: "D4Sign — Send Document" },
       USE_SUBSCRIPTION: "Y",
-      PROPERTIES: buildProperties(),
-      FILTER: buildFilter(),
+      PROPERTIES: properties,
+      FILTER: filter,
     });
     return;
   }
@@ -58,8 +64,8 @@ export async function ensureBizprocEnviarDocumento(
       en: "Generates and sends a document for signature via D4Sign using a configured template.",
     },
     USE_SUBSCRIPTION: "Y",
-    PROPERTIES: buildProperties(),
-    FILTER: buildFilter(),
+    PROPERTIES: properties,
+    FILTER: filter,
   });
 }
 
@@ -72,49 +78,21 @@ function buildFilter() {
   };
 }
 
-function buildProperties() {
+function buildProperties(templateOptions: Record<string, string>) {
+  const hasOptions = Object.keys(templateOptions).length > 0;
+
   return {
     template_id: {
-      Name: { pt: "ID do Template D4Sign", en: "D4Sign Template ID" },
+      Name: { pt: "Template D4Sign", en: "D4Sign Template" },
       Description: {
-        pt: "ID do template configurado em Operação → Templates. Ex: MjAyOTQw",
-        en: "Template ID configured in Operation → Templates.",
+        pt: "Selecione o template configurado em Operação → Templates. Clique em 'Sincronizar robô' após adicionar novos templates.",
+        en: "Select the template configured in Operation → Templates. Click 'Sync robot' after adding new templates.",
       },
       Required: "Y",
       Multiple: "N",
       Default: "",
-      Type: "string",
-    },
-    document_name: {
-      Name: { pt: "Nome do Documento", en: "Document Name" },
-      Description: {
-        pt: "Nome que o documento receberá no D4Sign.",
-        en: "Name the document will receive in D4Sign.",
-      },
-      Required: "N",
-      Multiple: "N",
-      Default: "",
-      Type: "string",
-    },
-    signers_emails: {
-      Name: { pt: "E-mails dos Signatários", en: "Signers Emails" },
-      Description: {
-        pt: "E-mails dos signatários separados por vírgula. Ex: joao@empresa.com,maria@empresa.com",
-        en: "Signers emails separated by comma.",
-      },
-      Required: "Y",
-      Multiple: "N",
-      Default: "",
-      Type: "string",
-    },
-    envelope: {
-      Name: { pt: "Criar envelope?", en: "Create envelope?" },
-      Description: { pt: "Criar envelope e adiciona o documento.", en: "Create envelope and add document." },
-      Required: "Y",
-      Multiple: "N",
-      Default: "N",
       Type: "select",
-      Options: { Y: "Sim", N: "Não" },
+      Options: hasOptions ? templateOptions : { "": "— configure templates primeiro —" },
     },
   };
 }

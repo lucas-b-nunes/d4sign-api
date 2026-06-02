@@ -18,12 +18,6 @@ import {
 } from "@/lib/d4sign/client";
 import { getPublicAppUrl } from "@/lib/env";
 
-const FLOWS: Record<string, "urlEnviarDocumentoEnvelope" | "urlEnviarDocumento"> =
-  {
-    Y: "urlEnviarDocumentoEnvelope",
-    N: "urlEnviarDocumento",
-  };
-
 function dataGet(obj: unknown, path: string): unknown {
   const parts = path.split(".");
   let cur: unknown = obj;
@@ -94,10 +88,7 @@ export async function handleEnviarDocumento(c: Context) {
   }
   const { domain, app } = resolved;
 
-  const envelopeRaw = dataGet(body, "properties.envelope");
-  const envelope =
-    envelopeRaw === "Y" || envelopeRaw === "N" ? String(envelopeRaw) : "N";
-  const urlKey = FLOWS[envelope] ?? "urlEnviarDocumento";
+  const urlKey = "urlEnviarDocumento";
 
   const docId = body.document_id;
   let entity = "deal";
@@ -132,10 +123,6 @@ export async function handleEnviarDocumento(c: Context) {
     }
 
     const templateId = dataGet(body, "properties.template_id");
-    const signersEmailsRaw = dataGet(body, "properties.signers_emails");
-    const documentName =
-      (dataGet(body, "properties.document_name") as string | undefined) ??
-      `Documento ${entity} ${entityId}`;
 
     if (!templateId || typeof templateId !== "string") {
       return c.json({ error: "properties.template_id obrigatório" }, 400);
@@ -146,7 +133,7 @@ export async function handleEnviarDocumento(c: Context) {
       return c.json({ error: "Cofre padrão não configurado. Acesse Configurações → Globais." }, 400);
     }
 
-    // Buscar mapeamento do template
+    // Buscar mapeamento do template (inclui documentName e signersEmails)
     const mapping = await prisma.templateMapping.findUnique({
       where: { appId_templateId: { appId: app.id, templateId } },
     });
@@ -155,6 +142,10 @@ export async function handleEnviarDocumento(c: Context) {
         error: `Mapeamento do template "${templateId}" não encontrado. Configure em Operação → Templates.`,
       }, 400);
     }
+
+    // Ler documentName e signersEmails do banco (não mais do body do BizProc)
+    const documentName = mapping.documentName ?? `Documento ${entity} ${entityId}`;
+    const signersEmailsRaw = mapping.signersEmails;
 
     // Obter access token válido
     const cred = app.credentials;
@@ -217,10 +208,11 @@ export async function handleEnviarDocumento(c: Context) {
       // Não fatal — continua o fluxo
     }
 
-    // Adicionar signatários
-    const emails: string[] =
-      typeof signersEmailsRaw === "string"
-        ? signersEmailsRaw.split(",").map((e) => e.trim()).filter(Boolean)
+    // Adicionar signatários (signersEmails é um JSON array de strings no banco)
+    const emails: string[] = Array.isArray(signersEmailsRaw)
+      ? (signersEmailsRaw as string[]).filter(Boolean)
+      : typeof signersEmailsRaw === "string"
+        ? (signersEmailsRaw as string).split(",").map((e) => e.trim()).filter(Boolean)
         : [];
 
     if (emails.length > 0) {
