@@ -108,6 +108,8 @@ export async function handleD4SignWebhook(c: Context) {
             rawLastPayload: body as object,
             statusName: result.statusName,
             statusId: result.statusId || undefined,
+            signedSignerEmails: result.signedSignerEmails,
+            signerTotal: result.signerTotal ?? undefined,
           },
         });
 

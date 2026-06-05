@@ -28,10 +28,12 @@ export type AggregateDocument = {
 
 export type DocumentAvgAggregateOutputType = {
   statusId: number | null
+  signerTotal: number | null
 }
 
 export type DocumentSumAggregateOutputType = {
   statusId: number | null
+  signerTotal: number | null
 }
 
 export type DocumentMinAggregateOutputType = {
@@ -42,6 +44,7 @@ export type DocumentMinAggregateOutputType = {
   entityId: string | null
   statusId: number | null
   statusName: string | null
+  signerTotal: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -54,6 +57,7 @@ export type DocumentMaxAggregateOutputType = {
   entityId: string | null
   statusId: number | null
   statusName: string | null
+  signerTotal: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +70,8 @@ export type DocumentCountAggregateOutputType = {
   entityId: number
   statusId: number
   statusName: number
+  signerTotal: number
+  signedSignerEmails: number
   rawLastPayload: number
   createdAt: number
   updatedAt: number
@@ -75,10 +81,12 @@ export type DocumentCountAggregateOutputType = {
 
 export type DocumentAvgAggregateInputType = {
   statusId?: true
+  signerTotal?: true
 }
 
 export type DocumentSumAggregateInputType = {
   statusId?: true
+  signerTotal?: true
 }
 
 export type DocumentMinAggregateInputType = {
@@ -89,6 +97,7 @@ export type DocumentMinAggregateInputType = {
   entityId?: true
   statusId?: true
   statusName?: true
+  signerTotal?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -101,6 +110,7 @@ export type DocumentMaxAggregateInputType = {
   entityId?: true
   statusId?: true
   statusName?: true
+  signerTotal?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -113,6 +123,8 @@ export type DocumentCountAggregateInputType = {
   entityId?: true
   statusId?: true
   statusName?: true
+  signerTotal?: true
+  signedSignerEmails?: true
   rawLastPayload?: true
   createdAt?: true
   updatedAt?: true
@@ -213,6 +225,8 @@ export type DocumentGroupByOutputType = {
   entityId: string
   statusId: number | null
   statusName: string | null
+  signerTotal: number | null
+  signedSignerEmails: runtime.JsonValue
   rawLastPayload: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
@@ -249,6 +263,8 @@ export type DocumentWhereInput = {
   entityId?: Prisma.StringFilter<"Document"> | string
   statusId?: Prisma.IntNullableFilter<"Document"> | number | null
   statusName?: Prisma.StringNullableFilter<"Document"> | string | null
+  signerTotal?: Prisma.IntNullableFilter<"Document"> | number | null
+  signedSignerEmails?: Prisma.JsonFilter<"Document">
   rawLastPayload?: Prisma.JsonNullableFilter<"Document">
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
@@ -263,6 +279,8 @@ export type DocumentOrderByWithRelationInput = {
   entityId?: Prisma.SortOrder
   statusId?: Prisma.SortOrderInput | Prisma.SortOrder
   statusName?: Prisma.SortOrderInput | Prisma.SortOrder
+  signerTotal?: Prisma.SortOrderInput | Prisma.SortOrder
+  signedSignerEmails?: Prisma.SortOrder
   rawLastPayload?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -281,6 +299,8 @@ export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   entityId?: Prisma.StringFilter<"Document"> | string
   statusId?: Prisma.IntNullableFilter<"Document"> | number | null
   statusName?: Prisma.StringNullableFilter<"Document"> | string | null
+  signerTotal?: Prisma.IntNullableFilter<"Document"> | number | null
+  signedSignerEmails?: Prisma.JsonFilter<"Document">
   rawLastPayload?: Prisma.JsonNullableFilter<"Document">
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
@@ -295,6 +315,8 @@ export type DocumentOrderByWithAggregationInput = {
   entityId?: Prisma.SortOrder
   statusId?: Prisma.SortOrderInput | Prisma.SortOrder
   statusName?: Prisma.SortOrderInput | Prisma.SortOrder
+  signerTotal?: Prisma.SortOrderInput | Prisma.SortOrder
+  signedSignerEmails?: Prisma.SortOrder
   rawLastPayload?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -316,6 +338,8 @@ export type DocumentScalarWhereWithAggregatesInput = {
   entityId?: Prisma.StringWithAggregatesFilter<"Document"> | string
   statusId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
   statusName?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
+  signerTotal?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
+  signedSignerEmails?: Prisma.JsonWithAggregatesFilter<"Document">
   rawLastPayload?: Prisma.JsonNullableWithAggregatesFilter<"Document">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
@@ -328,6 +352,8 @@ export type DocumentCreateInput = {
   entityId: string
   statusId?: number | null
   statusName?: string | null
+  signerTotal?: number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -342,6 +368,8 @@ export type DocumentUncheckedCreateInput = {
   entityId: string
   statusId?: number | null
   statusName?: string | null
+  signerTotal?: number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -354,6 +382,8 @@ export type DocumentUpdateInput = {
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   statusId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   statusName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signerTotal?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -368,6 +398,8 @@ export type DocumentUncheckedUpdateInput = {
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   statusId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   statusName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signerTotal?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -381,6 +413,8 @@ export type DocumentCreateManyInput = {
   entityId: string
   statusId?: number | null
   statusName?: string | null
+  signerTotal?: number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -393,6 +427,8 @@ export type DocumentUpdateManyMutationInput = {
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   statusId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   statusName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signerTotal?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -406,6 +442,8 @@ export type DocumentUncheckedUpdateManyInput = {
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   statusId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   statusName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signerTotal?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -435,6 +473,8 @@ export type DocumentCountOrderByAggregateInput = {
   entityId?: Prisma.SortOrder
   statusId?: Prisma.SortOrder
   statusName?: Prisma.SortOrder
+  signerTotal?: Prisma.SortOrder
+  signedSignerEmails?: Prisma.SortOrder
   rawLastPayload?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -442,6 +482,7 @@ export type DocumentCountOrderByAggregateInput = {
 
 export type DocumentAvgOrderByAggregateInput = {
   statusId?: Prisma.SortOrder
+  signerTotal?: Prisma.SortOrder
 }
 
 export type DocumentMaxOrderByAggregateInput = {
@@ -452,6 +493,7 @@ export type DocumentMaxOrderByAggregateInput = {
   entityId?: Prisma.SortOrder
   statusId?: Prisma.SortOrder
   statusName?: Prisma.SortOrder
+  signerTotal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -464,12 +506,14 @@ export type DocumentMinOrderByAggregateInput = {
   entityId?: Prisma.SortOrder
   statusId?: Prisma.SortOrder
   statusName?: Prisma.SortOrder
+  signerTotal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type DocumentSumOrderByAggregateInput = {
   statusId?: Prisma.SortOrder
+  signerTotal?: Prisma.SortOrder
 }
 
 export type DocumentCreateNestedManyWithoutAppInput = {
@@ -529,6 +573,8 @@ export type DocumentCreateWithoutAppInput = {
   entityId: string
   statusId?: number | null
   statusName?: string | null
+  signerTotal?: number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -541,6 +587,8 @@ export type DocumentUncheckedCreateWithoutAppInput = {
   entityId: string
   statusId?: number | null
   statusName?: string | null
+  signerTotal?: number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -583,6 +631,8 @@ export type DocumentScalarWhereInput = {
   entityId?: Prisma.StringFilter<"Document"> | string
   statusId?: Prisma.IntNullableFilter<"Document"> | number | null
   statusName?: Prisma.StringNullableFilter<"Document"> | string | null
+  signerTotal?: Prisma.IntNullableFilter<"Document"> | number | null
+  signedSignerEmails?: Prisma.JsonFilter<"Document">
   rawLastPayload?: Prisma.JsonNullableFilter<"Document">
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
@@ -595,6 +645,8 @@ export type DocumentCreateManyAppInput = {
   entityId: string
   statusId?: number | null
   statusName?: string | null
+  signerTotal?: number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -607,6 +659,8 @@ export type DocumentUpdateWithoutAppInput = {
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   statusId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   statusName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signerTotal?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -619,6 +673,8 @@ export type DocumentUncheckedUpdateWithoutAppInput = {
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   statusId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   statusName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signerTotal?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -631,6 +687,8 @@ export type DocumentUncheckedUpdateManyWithoutAppInput = {
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   statusId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   statusName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signerTotal?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  signedSignerEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   rawLastPayload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -646,6 +704,8 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   entityId?: boolean
   statusId?: boolean
   statusName?: boolean
+  signerTotal?: boolean
+  signedSignerEmails?: boolean
   rawLastPayload?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -662,12 +722,14 @@ export type DocumentSelectScalar = {
   entityId?: boolean
   statusId?: boolean
   statusName?: boolean
+  signerTotal?: boolean
+  signedSignerEmails?: boolean
   rawLastPayload?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appId" | "uuidDoc" | "entityType" | "entityId" | "statusId" | "statusName" | "rawLastPayload" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
+export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appId" | "uuidDoc" | "entityType" | "entityId" | "statusId" | "statusName" | "signerTotal" | "signedSignerEmails" | "rawLastPayload" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
 export type DocumentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   app?: boolean | Prisma.CoreAppDefaultArgs<ExtArgs>
 }
@@ -685,6 +747,8 @@ export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     entityId: string
     statusId: number | null
     statusName: string | null
+    signerTotal: number | null
+    signedSignerEmails: runtime.JsonValue
     rawLastPayload: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
@@ -1065,6 +1129,8 @@ export interface DocumentFieldRefs {
   readonly entityId: Prisma.FieldRef<"Document", 'String'>
   readonly statusId: Prisma.FieldRef<"Document", 'Int'>
   readonly statusName: Prisma.FieldRef<"Document", 'String'>
+  readonly signerTotal: Prisma.FieldRef<"Document", 'Int'>
+  readonly signedSignerEmails: Prisma.FieldRef<"Document", 'Json'>
   readonly rawLastPayload: Prisma.FieldRef<"Document", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Document", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Document", 'DateTime'>

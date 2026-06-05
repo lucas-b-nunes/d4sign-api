@@ -362,8 +362,22 @@ export async function handleEnviarDocumento(c: Context) {
     // Persistir documento no banco
     await prisma.document.upsert({
       where: { uuidDoc },
-      create: { appId: app.id, uuidDoc, entityType: entity, entityId, statusName: "Aguardando Assinaturas", statusId: 3 },
-      update: { statusName: "Aguardando Assinaturas", statusId: 3 },
+      create: {
+        appId: app.id,
+        uuidDoc,
+        entityType: entity,
+        entityId,
+        statusName: "Aguardando Assinaturas",
+        statusId: 3,
+        signerTotal: emails.length,
+        signedSignerEmails: [],
+      },
+      update: {
+        statusName: "Aguardando Assinaturas",
+        statusId: 3,
+        signerTotal: emails.length,
+        signedSignerEmails: [],
+      },
     });
 
     await prisma.auditLog.create({

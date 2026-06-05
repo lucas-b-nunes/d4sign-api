@@ -14,12 +14,19 @@ import {
 import { toAppAuth } from "@/lib/tenant";
 import type { CoreDomain, CoreApp, Setting, D4SignCredential, CoreCredential } from "@/generated/prisma/client";
 import { extractTypePost } from "@/lib/d4sign/parse-webhook-body";
+import {
+  addSignedSignerEmail,
+  formatPartialSignedStatus,
+  parseSignedSignerEmails,
+} from "@/lib/d4sign/signature-progress";
 
 type DocumentRow = {
   uuidDoc: string;
   entityType: string;
   entityId: string;
   statusName: string | null;
+  signerTotal: number | null;
+  signedSignerEmails: unknown;
   app: CoreApp & {
     domain: CoreDomain;
     credentials: CoreCredential | null;
@@ -69,6 +76,41 @@ function resolveStatus(body: Record<string, unknown>): {
   };
 }
 
+function resolveStatusWithSignerProgress(
+  body: Record<string, unknown>,
+  doc: DocumentRow,
+): {
+  statusName: string;
+  statusId: number;
+  signedSignerEmails: string[];
+  signerTotal: number | null;
+} {
+  const typePost = extractTypePost(body);
+  const signedSignerEmails = parseSignedSignerEmails(doc.signedSignerEmails);
+  const signerTotal = doc.signerTotal;
+
+  if (typePost === "4") {
+    const mapped = TYPE_POST_STATUS["4"];
+    const email = typeof body.email === "string" ? body.email : undefined;
+    const updatedEmails = addSignedSignerEmail(signedSignerEmails, email);
+
+    let statusName = mapped.statusName;
+    if (signerTotal && signerTotal > 1) {
+      statusName = formatPartialSignedStatus(updatedEmails.length, signerTotal);
+    }
+
+    return {
+      statusName,
+      statusId: mapped.statusId,
+      signedSignerEmails: updatedEmails,
+      signerTotal,
+    };
+  }
+
+  const { statusName, statusId } = resolveStatus(body);
+  return { statusName, statusId, signedSignerEmails, signerTotal };
+}
+
 async function downloadSignedPdf(
   config: D4SignClientConfig,
   uuidDoc: string,
@@ -98,7 +140,13 @@ async function downloadSignedPdf(
 export async function processD4SignWebhook(
   doc: DocumentRow,
   body: Record<string, unknown>,
-): Promise<{ statusName: string; statusId: number; bitrixUpdated: boolean }> {
+): Promise<{
+  statusName: string;
+  statusId: number;
+  bitrixUpdated: boolean;
+  signedSignerEmails: string[];
+  signerTotal: number | null;
+}> {
   const { app } = doc;
   const cred = app.credentials;
   const d4cred = app.d4signCredential;
@@ -115,12 +163,13 @@ export async function processD4SignWebhook(
     attachField: setting?.d4signDocumentAttachField ?? null,
   });
 
-  const { statusName, statusId } = resolveStatus(body);
+  const { statusName, statusId, signedSignerEmails, signerTotal } =
+    resolveStatusWithSignerProgress(body, doc);
   let bitrixUpdated = false;
 
   if (!cred) {
     console.warn("[webhook-d4sign] credenciais Bitrix ausentes — pulando sync CRM");
-    return { statusName, statusId, bitrixUpdated };
+    return { statusName, statusId, bitrixUpdated, signedSignerEmails, signerTotal };
   }
 
   const statusField = setting?.d4signDocumentStatusField;
@@ -210,5 +259,5 @@ export async function processD4SignWebhook(
     );
   }
 
-  return { statusName, statusId, bitrixUpdated };
+  return { statusName, statusId, bitrixUpdated, signedSignerEmails, signerTotal };
 }
