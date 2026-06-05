@@ -224,6 +224,8 @@ export const TemplateMappingScalarFieldEnum = {
   appId: 'appId',
   templateId: 'templateId',
   templateName: 'templateName',
+  documentName: 'documentName',
+  signersEmails: 'signersEmails',
   mappings: 'mappings',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -398,7 +400,8 @@ export const TemplateMappingOrderByRelevanceFieldEnum = {
   id: 'id',
   appId: 'appId',
   templateId: 'templateId',
-  templateName: 'templateName'
+  templateName: 'templateName',
+  documentName: 'documentName'
 } as const
 
 export type TemplateMappingOrderByRelevanceFieldEnum = (typeof TemplateMappingOrderByRelevanceFieldEnum)[keyof typeof TemplateMappingOrderByRelevanceFieldEnum]

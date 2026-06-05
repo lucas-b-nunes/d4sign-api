@@ -29,6 +29,7 @@ export type TemplateMappingMinAggregateOutputType = {
   appId: string | null
   templateId: string | null
   templateName: string | null
+  documentName: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -38,6 +39,7 @@ export type TemplateMappingMaxAggregateOutputType = {
   appId: string | null
   templateId: string | null
   templateName: string | null
+  documentName: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -47,6 +49,8 @@ export type TemplateMappingCountAggregateOutputType = {
   appId: number
   templateId: number
   templateName: number
+  documentName: number
+  signersEmails: number
   mappings: number
   createdAt: number
   updatedAt: number
@@ -59,6 +63,7 @@ export type TemplateMappingMinAggregateInputType = {
   appId?: true
   templateId?: true
   templateName?: true
+  documentName?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -68,6 +73,7 @@ export type TemplateMappingMaxAggregateInputType = {
   appId?: true
   templateId?: true
   templateName?: true
+  documentName?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -77,6 +83,8 @@ export type TemplateMappingCountAggregateInputType = {
   appId?: true
   templateId?: true
   templateName?: true
+  documentName?: true
+  signersEmails?: true
   mappings?: true
   createdAt?: true
   updatedAt?: true
@@ -160,6 +168,8 @@ export type TemplateMappingGroupByOutputType = {
   appId: string
   templateId: string
   templateName: string
+  documentName: string | null
+  signersEmails: runtime.JsonValue
   mappings: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
@@ -191,6 +201,8 @@ export type TemplateMappingWhereInput = {
   appId?: Prisma.StringFilter<"TemplateMapping"> | string
   templateId?: Prisma.StringFilter<"TemplateMapping"> | string
   templateName?: Prisma.StringFilter<"TemplateMapping"> | string
+  documentName?: Prisma.StringNullableFilter<"TemplateMapping"> | string | null
+  signersEmails?: Prisma.JsonFilter<"TemplateMapping">
   mappings?: Prisma.JsonFilter<"TemplateMapping">
   createdAt?: Prisma.DateTimeFilter<"TemplateMapping"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TemplateMapping"> | Date | string
@@ -202,6 +214,8 @@ export type TemplateMappingOrderByWithRelationInput = {
   appId?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
   templateName?: Prisma.SortOrder
+  documentName?: Prisma.SortOrderInput | Prisma.SortOrder
+  signersEmails?: Prisma.SortOrder
   mappings?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -218,6 +232,8 @@ export type TemplateMappingWhereUniqueInput = Prisma.AtLeast<{
   appId?: Prisma.StringFilter<"TemplateMapping"> | string
   templateId?: Prisma.StringFilter<"TemplateMapping"> | string
   templateName?: Prisma.StringFilter<"TemplateMapping"> | string
+  documentName?: Prisma.StringNullableFilter<"TemplateMapping"> | string | null
+  signersEmails?: Prisma.JsonFilter<"TemplateMapping">
   mappings?: Prisma.JsonFilter<"TemplateMapping">
   createdAt?: Prisma.DateTimeFilter<"TemplateMapping"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TemplateMapping"> | Date | string
@@ -229,6 +245,8 @@ export type TemplateMappingOrderByWithAggregationInput = {
   appId?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
   templateName?: Prisma.SortOrder
+  documentName?: Prisma.SortOrderInput | Prisma.SortOrder
+  signersEmails?: Prisma.SortOrder
   mappings?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -245,6 +263,8 @@ export type TemplateMappingScalarWhereWithAggregatesInput = {
   appId?: Prisma.StringWithAggregatesFilter<"TemplateMapping"> | string
   templateId?: Prisma.StringWithAggregatesFilter<"TemplateMapping"> | string
   templateName?: Prisma.StringWithAggregatesFilter<"TemplateMapping"> | string
+  documentName?: Prisma.StringNullableWithAggregatesFilter<"TemplateMapping"> | string | null
+  signersEmails?: Prisma.JsonWithAggregatesFilter<"TemplateMapping">
   mappings?: Prisma.JsonWithAggregatesFilter<"TemplateMapping">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"TemplateMapping"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"TemplateMapping"> | Date | string
@@ -254,6 +274,8 @@ export type TemplateMappingCreateInput = {
   id?: string
   templateId: string
   templateName: string
+  documentName?: string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -265,6 +287,8 @@ export type TemplateMappingUncheckedCreateInput = {
   appId: string
   templateId: string
   templateName: string
+  documentName?: string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -274,6 +298,8 @@ export type TemplateMappingUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   templateName?: Prisma.StringFieldUpdateOperationsInput | string
+  documentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -285,6 +311,8 @@ export type TemplateMappingUncheckedUpdateInput = {
   appId?: Prisma.StringFieldUpdateOperationsInput | string
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   templateName?: Prisma.StringFieldUpdateOperationsInput | string
+  documentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -295,6 +323,8 @@ export type TemplateMappingCreateManyInput = {
   appId: string
   templateId: string
   templateName: string
+  documentName?: string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -304,6 +334,8 @@ export type TemplateMappingUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   templateName?: Prisma.StringFieldUpdateOperationsInput | string
+  documentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -314,6 +346,8 @@ export type TemplateMappingUncheckedUpdateManyInput = {
   appId?: Prisma.StringFieldUpdateOperationsInput | string
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   templateName?: Prisma.StringFieldUpdateOperationsInput | string
+  documentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -345,6 +379,8 @@ export type TemplateMappingCountOrderByAggregateInput = {
   appId?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
   templateName?: Prisma.SortOrder
+  documentName?: Prisma.SortOrder
+  signersEmails?: Prisma.SortOrder
   mappings?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -355,6 +391,7 @@ export type TemplateMappingMaxOrderByAggregateInput = {
   appId?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
   templateName?: Prisma.SortOrder
+  documentName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -364,6 +401,7 @@ export type TemplateMappingMinOrderByAggregateInput = {
   appId?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
   templateName?: Prisma.SortOrder
+  documentName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -414,6 +452,8 @@ export type TemplateMappingCreateWithoutAppInput = {
   id?: string
   templateId: string
   templateName: string
+  documentName?: string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -423,6 +463,8 @@ export type TemplateMappingUncheckedCreateWithoutAppInput = {
   id?: string
   templateId: string
   templateName: string
+  documentName?: string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -462,6 +504,8 @@ export type TemplateMappingScalarWhereInput = {
   appId?: Prisma.StringFilter<"TemplateMapping"> | string
   templateId?: Prisma.StringFilter<"TemplateMapping"> | string
   templateName?: Prisma.StringFilter<"TemplateMapping"> | string
+  documentName?: Prisma.StringNullableFilter<"TemplateMapping"> | string | null
+  signersEmails?: Prisma.JsonFilter<"TemplateMapping">
   mappings?: Prisma.JsonFilter<"TemplateMapping">
   createdAt?: Prisma.DateTimeFilter<"TemplateMapping"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TemplateMapping"> | Date | string
@@ -471,6 +515,8 @@ export type TemplateMappingCreateManyAppInput = {
   id?: string
   templateId: string
   templateName: string
+  documentName?: string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -480,6 +526,8 @@ export type TemplateMappingUpdateWithoutAppInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   templateName?: Prisma.StringFieldUpdateOperationsInput | string
+  documentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -489,6 +537,8 @@ export type TemplateMappingUncheckedUpdateWithoutAppInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   templateName?: Prisma.StringFieldUpdateOperationsInput | string
+  documentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -498,6 +548,8 @@ export type TemplateMappingUncheckedUpdateManyWithoutAppInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   templateName?: Prisma.StringFieldUpdateOperationsInput | string
+  documentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signersEmails?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   mappings?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -510,6 +562,8 @@ export type TemplateMappingSelect<ExtArgs extends runtime.Types.Extensions.Inter
   appId?: boolean
   templateId?: boolean
   templateName?: boolean
+  documentName?: boolean
+  signersEmails?: boolean
   mappings?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -523,12 +577,14 @@ export type TemplateMappingSelectScalar = {
   appId?: boolean
   templateId?: boolean
   templateName?: boolean
+  documentName?: boolean
+  signersEmails?: boolean
   mappings?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TemplateMappingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appId" | "templateId" | "templateName" | "mappings" | "createdAt" | "updatedAt", ExtArgs["result"]["templateMapping"]>
+export type TemplateMappingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appId" | "templateId" | "templateName" | "documentName" | "signersEmails" | "mappings" | "createdAt" | "updatedAt", ExtArgs["result"]["templateMapping"]>
 export type TemplateMappingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   app?: boolean | Prisma.CoreAppDefaultArgs<ExtArgs>
 }
@@ -543,6 +599,8 @@ export type $TemplateMappingPayload<ExtArgs extends runtime.Types.Extensions.Int
     appId: string
     templateId: string
     templateName: string
+    documentName: string | null
+    signersEmails: runtime.JsonValue
     mappings: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
@@ -920,6 +978,8 @@ export interface TemplateMappingFieldRefs {
   readonly appId: Prisma.FieldRef<"TemplateMapping", 'String'>
   readonly templateId: Prisma.FieldRef<"TemplateMapping", 'String'>
   readonly templateName: Prisma.FieldRef<"TemplateMapping", 'String'>
+  readonly documentName: Prisma.FieldRef<"TemplateMapping", 'String'>
+  readonly signersEmails: Prisma.FieldRef<"TemplateMapping", 'Json'>
   readonly mappings: Prisma.FieldRef<"TemplateMapping", 'Json'>
   readonly createdAt: Prisma.FieldRef<"TemplateMapping", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"TemplateMapping", 'DateTime'>

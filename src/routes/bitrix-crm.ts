@@ -89,7 +89,7 @@ export async function handleSyncRobot(c: Context) {
     templateOptions[m.templateId] = m.templateName;
   }
 
-  const auth = toAppAuth(tenant!, app);
+  const auth = toAppAuth(tenant!, app.credentials!);
   auth.accessToken = accessToken;
 
   await ensureBizprocEnviarDocumento(auth, templateOptions);

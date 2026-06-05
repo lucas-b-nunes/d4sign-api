@@ -101,7 +101,7 @@ export async function handleUpsertTemplateMapping(c: Context) {
 
   const body = await c.req.json<{
     templateName: string;
-    mappings: Record<string, unknown>;
+    mappings: Record<string, string>;
     documentName?: string;
     signersEmails?: string[];
   }>();
