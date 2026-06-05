@@ -3,12 +3,6 @@ import { prisma } from "@/lib/db";
 import { d4signPing } from "@/lib/d4sign/client";
 import { findTenantByMemberId, getFirstApp } from "@/lib/tenant";
 
-function maskSecret(value: string | null | undefined): string | null {
-  if (!value) return null;
-  if (value.length <= 4) return "****";
-  return `${"*".repeat(Math.min(12, value.length - 4))}${value.slice(-4)}`;
-}
-
 export async function handleGetD4SignSettings(c: Context) {
   const memberId = c.req.query("member_id");
   if (!memberId) {
@@ -24,9 +18,9 @@ export async function handleGetD4SignSettings(c: Context) {
   const cred = app.d4signCredential;
   return c.json({
     configured: Boolean(cred),
-    tokenApiMasked: maskSecret(cred?.tokenApi),
-    cryptKeyMasked: maskSecret(cred?.cryptKey),
-    hmacSecretMasked: maskSecret(cred?.hmacSecret),
+    tokenApi: cred?.tokenApi ?? null,
+    cryptKey: cred?.cryptKey ?? null,
+    hmacSecret: cred?.hmacSecret ?? null,
     defaultSafeUuid: cred?.defaultSafeUuid ?? null,
   });
 }
