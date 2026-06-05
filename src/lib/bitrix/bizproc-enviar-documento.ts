@@ -48,9 +48,10 @@ export async function ensureBizprocEnviarDocumento(
   const codes = extractRobotCodes(listRes.result);
   const properties = buildProperties(templateOptions);
   const filter = buildFilter();
-  const name = { pt: "D4Sign — Enviar Documento", en: "D4Sign — Send Document" };
+  // Bitrix24 usa "br" para português (Brasil), não "pt"
+  const name = { br: "D4Sign — Enviar Documento", en: "D4Sign — Send Document" };
   const description = {
-    pt: "Gera e envia documento para assinatura via D4Sign usando um template configurado.",
+    br: "Gera e envia documento para assinatura via D4Sign usando um template configurado.",
     en: "Generates and sends a document for signature via D4Sign using a configured template.",
   };
 
@@ -108,9 +109,9 @@ function buildProperties(templateOptions: Record<string, string>) {
 
   return {
     template_id: {
-      Name: { pt: "Template D4Sign", en: "D4Sign Template" },
+      Name: { br: "Template D4Sign", en: "D4Sign Template" },
       Description: {
-        pt: "Selecione o template configurado em Operação → Templates. Clique em 'Sincronizar robô' após adicionar novos templates.",
+        br: "Selecione o template configurado em Operação → Templates. Clique em 'Sincronizar robô' após adicionar novos templates.",
         en: "Select the template configured in Operation → Templates. Click 'Sync robot' after adding new templates.",
       },
       Required: "Y",
