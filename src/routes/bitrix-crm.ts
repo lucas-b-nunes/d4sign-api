@@ -92,7 +92,16 @@ export async function handleSyncRobot(c: Context) {
   const auth = toAppAuth(tenant!, app.credentials!);
   auth.accessToken = accessToken;
 
-  await ensureBizprocEnviarDocumento(auth, templateOptions);
-
-  return c.json({ ok: true, syncedTemplates: mappings.length });
+  try {
+    const result = await ensureBizprocEnviarDocumento(auth, templateOptions);
+    return c.json({
+      ok: true,
+      syncedTemplates: mappings.length,
+      action: result.action,
+    });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("[sync-robot]", msg);
+    return c.json({ error: msg }, 502);
+  }
 }
