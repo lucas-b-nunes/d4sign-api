@@ -41,6 +41,8 @@ export async function handleGetTenant(c: Context) {
           dealSettings: app.setting.dealSettings,
           verifySettings: app.setting.verifySettings,
           contactSettings: app.setting.contactSettings,
+          d4signDocumentStatusField: app.setting.d4signDocumentStatusField,
+          d4signDocumentAttachField: app.setting.d4signDocumentAttachField,
         }
       : null,
     instance: app.instance

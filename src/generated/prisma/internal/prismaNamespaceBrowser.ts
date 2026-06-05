@@ -140,6 +140,8 @@ export const SettingScalarFieldEnum = {
   dealSettings: 'dealSettings',
   verifySettings: 'verifySettings',
   contactSettings: 'contactSettings',
+  d4signDocumentStatusField: 'd4signDocumentStatusField',
+  d4signDocumentAttachField: 'd4signDocumentAttachField',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -314,7 +316,9 @@ export const SettingOrderByRelevanceFieldEnum = {
   groups: 'groups',
   dealSettings: 'dealSettings',
   verifySettings: 'verifySettings',
-  contactSettings: 'contactSettings'
+  contactSettings: 'contactSettings',
+  d4signDocumentStatusField: 'd4signDocumentStatusField',
+  d4signDocumentAttachField: 'd4signDocumentAttachField'
 } as const
 
 export type SettingOrderByRelevanceFieldEnum = (typeof SettingOrderByRelevanceFieldEnum)[keyof typeof SettingOrderByRelevanceFieldEnum]

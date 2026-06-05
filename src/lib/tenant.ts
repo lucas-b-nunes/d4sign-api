@@ -38,6 +38,24 @@ export async function findTenantByMemberId(
   });
 }
 
+export async function findTenantByDomain(
+  domainName: string,
+): Promise<TenantWithApps | null> {
+  return prisma.coreDomain.findFirst({
+    where: { name: domainName },
+    include: {
+      apps: {
+        include: {
+          credentials: true,
+          setting: true,
+          instance: true,
+          d4signCredential: true,
+        },
+      },
+    },
+  });
+}
+
 /** Retorna o primeiro (e geralmente único) app instalado do tenant. */
 export function getFirstApp(tenant: TenantWithApps): TenantApp | null {
   return tenant.apps[0] ?? null;

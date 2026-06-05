@@ -107,8 +107,14 @@ export async function d4signBuildFromTemplate(
   safeUuid: string,
   documentName: string,
   templates: Record<string, Record<string, unknown>>,
+  templateType: "html" | "word" | string = "word",
 ): Promise<{ uuid: string; message?: string }> {
-  return d4signPost(`/documents/${safeUuid}/makedocumentbytemplate`, config, {
+  const path =
+    templateType === "html"
+      ? `/documents/${safeUuid}/makedocumentbytemplate`
+      : `/documents/${safeUuid}/makedocumentbytemplateword`;
+
+  return d4signPost(path, config, {
     name_document: documentName,
     templates,
   });

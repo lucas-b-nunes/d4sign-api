@@ -8,12 +8,22 @@ import {
   prismaticUpdateSubscriptionGroups,
 } from "@/lib/integration/prismatic";
 import { refreshBitrixToken, bitrixRestGet } from "@/lib/bitrix/bitrix24";
-import { findTenantByMemberId, getFirstApp, toAppAuth } from "@/lib/tenant";
+import { findTenantByMemberId, findTenantByDomain, getFirstApp } from "@/lib/tenant";
+import {
+  buildD4SignTemplatePayload,
+  extractAuth,
+  extractAuthDomain,
+  extractDocumentEntity,
+  extractMemberId,
+  extractTemplateId,
+  parseBitrixRobotBody,
+} from "@/lib/bitrix/parse-robot-body";
 import {
   d4signBuildFromTemplate,
   d4signConfigureWebhook,
   d4signAddSigners,
   d4signSendToSigner,
+  d4signListTemplates,
   type D4SignClientConfig,
 } from "@/lib/d4sign/client";
 import { getPublicAppUrl } from "@/lib/env";
@@ -26,6 +36,52 @@ function dataGet(obj: unknown, path: string): unknown {
     cur = (cur as Record<string, unknown>)[p];
   }
   return cur;
+}
+
+async function parseRobotRequestBody(c: Context): Promise<Record<string, unknown>> {
+  const contentType = c.req.header("content-type") ?? "";
+  const raw = await c.req.text();
+  if (!raw.trim()) return {};
+  return parseBitrixRobotBody(raw, contentType);
+}
+
+async function resolveTenantFromRobotBody(body: Record<string, unknown>) {
+  const memberId = extractMemberId(body);
+  if (memberId) {
+    const tenant = await findTenantByMemberId(memberId);
+    if (tenant) return { tenant, memberId };
+  }
+
+  const domain = extractAuthDomain(body);
+  if (domain) {
+    const tenant = await findTenantByDomain(domain);
+    if (tenant) return { tenant, memberId: tenant.memberId };
+  }
+
+  return null;
+}
+
+function unauthorized(c: Context, error: string, meta?: Record<string, unknown>) {
+  console.error("[enviar-documento] 401:", error, meta ?? {});
+  return c.json({ error, ...meta }, 401);
+}
+
+function resolveDocumentName(
+  name: string,
+  crmData: Record<string, unknown>,
+  entityId: string,
+): string {
+  return name.replace(/\{=Document:([^}]+)\}/gi, (_, field: string) => {
+    const key = field.trim();
+    if (key.toUpperCase() === "ID") return entityId;
+    const val = crmData[key];
+    return val != null ? String(val) : "";
+  });
+}
+
+function badRequest(c: Context, error: string, meta?: Record<string, unknown>) {
+  console.error("[enviar-documento] 400:", error, meta ?? {});
+  return c.json({ error, ...meta }, 400);
 }
 
 async function resolveAppByMemberId(memberId: string) {
@@ -68,36 +124,42 @@ function resolveTemplateVariables(
 }
 
 export async function handleEnviarDocumento(c: Context) {
+  console.log("[enviar-documento] handler iniciado");
   let body: Record<string, unknown>;
   try {
-    body = await c.req.json<Record<string, unknown>>();
+    body = await parseRobotRequestBody(c);
   } catch {
-    return c.json({ error: "invalid_json" }, 400);
+    return badRequest(c, "invalid_body");
   }
 
-  const auth = dataGet(body, "auth") as Record<string, unknown> | undefined;
-  const memberId =
-    auth && typeof auth.member_id === "string" ? auth.member_id : undefined;
-  if (!memberId) {
-    return c.json({ error: "missing_auth.member_id" }, 401);
+  const resolvedTenant = await resolveTenantFromRobotBody(body);
+  if (!resolvedTenant) {
+    return unauthorized(c, "tenant_not_found", {
+      hint: "Reinstale o app no Bitrix ou verifique se auth.member_id / auth.domain estão no payload.",
+      hasAuth: Boolean(extractAuth(body)),
+      domain: extractAuthDomain(body) ?? null,
+    });
   }
 
-  const resolved = await resolveAppByMemberId(memberId);
-  if (!resolved) {
-    return c.json({ error: "Usuário não encontrado" }, 401);
+  const { tenant: domain, memberId } = resolvedTenant;
+  const app = getFirstApp(domain);
+  if (!app) {
+    return unauthorized(c, "app_not_found", { memberId });
   }
-  const { domain, app } = resolved;
+
+  const { entity, entityId } = extractDocumentEntity(body);
+  const templateIdFromBody = extractTemplateId(body);
+
+  console.log("[enviar-documento] parsed:", {
+    memberId,
+    entity,
+    entityId,
+    templateId: templateIdFromBody,
+    hasAuth: Boolean(extractAuth(body)),
+    domain: extractAuthDomain(body),
+  });
 
   const urlKey = "urlEnviarDocumento";
-
-  const docId = body.document_id;
-  let entity = "deal";
-  let entityId = "0";
-  if (Array.isArray(docId) && docId[2] != null) {
-    const parts = String(docId[2]).split("_");
-    entity = parts[0] ?? "deal";
-    entityId = parts[1] ?? "0";
-  }
 
   const instance = app.instance;
 
@@ -122,15 +184,18 @@ export async function handleEnviarDocumento(c: Context) {
       return c.json({ error: "d4sign_credentials_missing" }, 500);
     }
 
-    const templateId = dataGet(body, "properties.template_id");
+    const templateId = templateIdFromBody;
 
-    if (!templateId || typeof templateId !== "string") {
-      return c.json({ error: "properties.template_id obrigatório" }, 400);
+    if (!templateId) {
+      return badRequest(c, "properties.template_id obrigatório", {
+        properties: body.properties ?? null,
+        hint: "Selecione um template no robô BizProc e sincronize em Operação → Templates.",
+      });
     }
 
     const safeUuid = d4cred.defaultSafeUuid;
     if (!safeUuid) {
-      return c.json({ error: "Cofre padrão não configurado. Acesse Configurações → Globais." }, 400);
+      return badRequest(c, "Cofre padrão não configurado. Acesse Configurações → Globais.");
     }
 
     // Buscar mapeamento do template (inclui documentName e signersEmails)
@@ -138,18 +203,24 @@ export async function handleEnviarDocumento(c: Context) {
       where: { appId_templateId: { appId: app.id, templateId } },
     });
     if (!mapping) {
-      return c.json({
-        error: `Mapeamento do template "${templateId}" não encontrado. Configure em Operação → Templates.`,
-      }, 400);
+      return badRequest(
+        c,
+        `Mapeamento do template "${templateId}" não encontrado. Configure em Operação → Templates.`,
+        { templateId },
+      );
     }
 
     // Ler documentName e signersEmails do banco (não mais do body do BizProc)
-    const documentName = mapping.documentName ?? `Documento ${entity} ${entityId}`;
+    const rawDocumentName = mapping.documentName ?? `Documento ${entity} ${entityId}`;
     const signersEmailsRaw = mapping.signersEmails;
 
-    // Obter access token válido
+    // Obter access token válido (prioriza token enviado pelo Bitrix no auth)
     const cred = app.credentials;
-    let accessToken = cred?.accessToken ?? "";
+    const authFromBody = extractAuth(body);
+    let accessToken =
+      typeof authFromBody?.access_token === "string"
+        ? authFromBody.access_token
+        : cred?.accessToken ?? "";
     if (cred) {
       const tok = await refreshBitrixToken({
         clientId: cred.clientId,
@@ -171,17 +242,34 @@ export async function handleEnviarDocumento(c: Context) {
     // Buscar dados da entidade CRM
     const crmData = await fetchCrmEntity(domain.name, accessToken, entity, entityId);
 
+    const documentName = resolveDocumentName(rawDocumentName, crmData, entityId);
+
     // Resolver variáveis do template a partir do mapeamento salvo
     const rawMappings = mapping.mappings as Record<string, string>;
     const resolvedVars = resolveTemplateVariables(rawMappings, crmData);
+    const templatePayload = buildD4SignTemplatePayload(resolvedVars);
+    const d4signBody = {
+      name_document: documentName,
+      templates: { [templateId]: templatePayload },
+    };
 
-    // Montar payload do template (separar preenchedor dos tokens_gerais se necessário)
-    const templatePayload: Record<string, unknown> = { ...resolvedVars };
+    console.log("[enviar-documento] d4sign request body:", JSON.stringify(d4signBody, null, 2));
 
     const d4config: D4SignClientConfig = {
       tokenApi: d4cred.tokenApi,
       cryptKey: d4cred.cryptKey,
     };
+
+    let templateType = "word";
+    try {
+      const catalog = await d4signListTemplates(d4config);
+      const meta = Object.values(catalog).find((t) => t.id === templateId);
+      if (meta?.type) templateType = meta.type;
+    } catch {
+      // default word
+    }
+
+    console.log("[enviar-documento] d4sign endpoint:", templateType === "html" ? "makedocumentbytemplate" : "makedocumentbytemplateword");
 
     let uuidDoc: string;
     try {
@@ -190,10 +278,12 @@ export async function handleEnviarDocumento(c: Context) {
         safeUuid,
         documentName,
         { [templateId]: templatePayload },
+        templateType,
       );
       uuidDoc = buildResult.uuid;
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
+      console.error("[enviar-documento] d4sign build error:", msg);
       await prisma.auditLog.create({
         data: { appId: app.id, actor: "bizproc", action: "d4sign_build_error", meta: { error: msg, entity, entity_id: entityId } },
       });

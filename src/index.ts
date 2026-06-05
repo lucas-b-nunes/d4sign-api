@@ -28,6 +28,11 @@ import {
   handleUpsertTemplateMapping,
 } from "@/routes/d4sign-catalog";
 import { handleGetDealFields, handleSyncRobot } from "@/routes/bitrix-crm";
+import {
+  handleGetGlobalsSettings,
+  handlePutGlobalsSettings,
+} from "@/routes/globals-settings";
+import { requestLogger } from "@/lib/request-logger";
 
 const app = new Hono();
 
@@ -36,6 +41,8 @@ const corsOrigins = [
   "http://localhost:3000",
   ...(process.env.CORS_ORIGINS?.split(",").map((s) => s.trim()) ?? []),
 ];
+
+app.use("*", requestLogger);
 
 app.use(
   "*",
@@ -81,8 +88,13 @@ app.put("/api/d4sign/template-mappings/:templateId", handleUpsertTemplateMapping
 app.get("/api/bitrix/deal-fields", handleGetDealFields);
 app.post("/api/bitrix/sync-robot", handleSyncRobot);
 
+app.get("/api/settings/globals", handleGetGlobalsSettings);
+app.put("/api/settings/globals", handlePutGlobalsSettings);
+
 const port = Number(process.env.PORT ?? 3001);
 console.log(`d4sign-api listening on http://127.0.0.1:${port}`);
+console.log(`[boot] PUBLIC_APP_URL=${process.env.PUBLIC_APP_URL ?? "(não definido)"}`);
+console.log(`[boot] ngrok deve apontar para: http://127.0.0.1:${port}`);
 serve({ fetch: app.fetch, port });
 
 // Token refresh job: executa imediatamente e depois a cada 5 min

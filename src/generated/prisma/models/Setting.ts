@@ -32,6 +32,8 @@ export type SettingMinAggregateOutputType = {
   dealSettings: string | null
   verifySettings: string | null
   contactSettings: string | null
+  d4signDocumentStatusField: string | null
+  d4signDocumentAttachField: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +46,8 @@ export type SettingMaxAggregateOutputType = {
   dealSettings: string | null
   verifySettings: string | null
   contactSettings: string | null
+  d4signDocumentStatusField: string | null
+  d4signDocumentAttachField: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +60,8 @@ export type SettingCountAggregateOutputType = {
   dealSettings: number
   verifySettings: number
   contactSettings: number
+  d4signDocumentStatusField: number
+  d4signDocumentAttachField: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -70,6 +76,8 @@ export type SettingMinAggregateInputType = {
   dealSettings?: true
   verifySettings?: true
   contactSettings?: true
+  d4signDocumentStatusField?: true
+  d4signDocumentAttachField?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +90,8 @@ export type SettingMaxAggregateInputType = {
   dealSettings?: true
   verifySettings?: true
   contactSettings?: true
+  d4signDocumentStatusField?: true
+  d4signDocumentAttachField?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -94,6 +104,8 @@ export type SettingCountAggregateInputType = {
   dealSettings?: true
   verifySettings?: true
   contactSettings?: true
+  d4signDocumentStatusField?: true
+  d4signDocumentAttachField?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -179,6 +191,8 @@ export type SettingGroupByOutputType = {
   dealSettings: string | null
   verifySettings: string | null
   contactSettings: string | null
+  d4signDocumentStatusField: string | null
+  d4signDocumentAttachField: string | null
   createdAt: Date
   updatedAt: Date
   _count: SettingCountAggregateOutputType | null
@@ -212,6 +226,8 @@ export type SettingWhereInput = {
   dealSettings?: Prisma.StringNullableFilter<"Setting"> | string | null
   verifySettings?: Prisma.StringNullableFilter<"Setting"> | string | null
   contactSettings?: Prisma.StringNullableFilter<"Setting"> | string | null
+  d4signDocumentStatusField?: Prisma.StringNullableFilter<"Setting"> | string | null
+  d4signDocumentAttachField?: Prisma.StringNullableFilter<"Setting"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Setting"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Setting"> | Date | string
   app?: Prisma.XOR<Prisma.CoreAppScalarRelationFilter, Prisma.CoreAppWhereInput>
@@ -225,6 +241,8 @@ export type SettingOrderByWithRelationInput = {
   dealSettings?: Prisma.SortOrderInput | Prisma.SortOrder
   verifySettings?: Prisma.SortOrderInput | Prisma.SortOrder
   contactSettings?: Prisma.SortOrderInput | Prisma.SortOrder
+  d4signDocumentStatusField?: Prisma.SortOrderInput | Prisma.SortOrder
+  d4signDocumentAttachField?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   app?: Prisma.CoreAppOrderByWithRelationInput
@@ -242,6 +260,8 @@ export type SettingWhereUniqueInput = Prisma.AtLeast<{
   dealSettings?: Prisma.StringNullableFilter<"Setting"> | string | null
   verifySettings?: Prisma.StringNullableFilter<"Setting"> | string | null
   contactSettings?: Prisma.StringNullableFilter<"Setting"> | string | null
+  d4signDocumentStatusField?: Prisma.StringNullableFilter<"Setting"> | string | null
+  d4signDocumentAttachField?: Prisma.StringNullableFilter<"Setting"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Setting"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Setting"> | Date | string
   app?: Prisma.XOR<Prisma.CoreAppScalarRelationFilter, Prisma.CoreAppWhereInput>
@@ -255,6 +275,8 @@ export type SettingOrderByWithAggregationInput = {
   dealSettings?: Prisma.SortOrderInput | Prisma.SortOrder
   verifySettings?: Prisma.SortOrderInput | Prisma.SortOrder
   contactSettings?: Prisma.SortOrderInput | Prisma.SortOrder
+  d4signDocumentStatusField?: Prisma.SortOrderInput | Prisma.SortOrder
+  d4signDocumentAttachField?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SettingCountOrderByAggregateInput
@@ -273,6 +295,8 @@ export type SettingScalarWhereWithAggregatesInput = {
   dealSettings?: Prisma.StringNullableWithAggregatesFilter<"Setting"> | string | null
   verifySettings?: Prisma.StringNullableWithAggregatesFilter<"Setting"> | string | null
   contactSettings?: Prisma.StringNullableWithAggregatesFilter<"Setting"> | string | null
+  d4signDocumentStatusField?: Prisma.StringNullableWithAggregatesFilter<"Setting"> | string | null
+  d4signDocumentAttachField?: Prisma.StringNullableWithAggregatesFilter<"Setting"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Setting"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Setting"> | Date | string
 }
@@ -284,6 +308,8 @@ export type SettingCreateInput = {
   dealSettings?: string | null
   verifySettings?: string | null
   contactSettings?: string | null
+  d4signDocumentStatusField?: string | null
+  d4signDocumentAttachField?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   app: Prisma.CoreAppCreateNestedOneWithoutSettingInput
@@ -297,6 +323,8 @@ export type SettingUncheckedCreateInput = {
   dealSettings?: string | null
   verifySettings?: string | null
   contactSettings?: string | null
+  d4signDocumentStatusField?: string | null
+  d4signDocumentAttachField?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -308,6 +336,8 @@ export type SettingUpdateInput = {
   dealSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifySettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentStatusField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentAttachField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   app?: Prisma.CoreAppUpdateOneRequiredWithoutSettingNestedInput
@@ -321,6 +351,8 @@ export type SettingUncheckedUpdateInput = {
   dealSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifySettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentStatusField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentAttachField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -333,6 +365,8 @@ export type SettingCreateManyInput = {
   dealSettings?: string | null
   verifySettings?: string | null
   contactSettings?: string | null
+  d4signDocumentStatusField?: string | null
+  d4signDocumentAttachField?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -344,6 +378,8 @@ export type SettingUpdateManyMutationInput = {
   dealSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifySettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentStatusField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentAttachField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -356,6 +392,8 @@ export type SettingUncheckedUpdateManyInput = {
   dealSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifySettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentStatusField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentAttachField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -379,6 +417,8 @@ export type SettingCountOrderByAggregateInput = {
   dealSettings?: Prisma.SortOrder
   verifySettings?: Prisma.SortOrder
   contactSettings?: Prisma.SortOrder
+  d4signDocumentStatusField?: Prisma.SortOrder
+  d4signDocumentAttachField?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -391,6 +431,8 @@ export type SettingMaxOrderByAggregateInput = {
   dealSettings?: Prisma.SortOrder
   verifySettings?: Prisma.SortOrder
   contactSettings?: Prisma.SortOrder
+  d4signDocumentStatusField?: Prisma.SortOrder
+  d4signDocumentAttachField?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -403,6 +445,8 @@ export type SettingMinOrderByAggregateInput = {
   dealSettings?: Prisma.SortOrder
   verifySettings?: Prisma.SortOrder
   contactSettings?: Prisma.SortOrder
+  d4signDocumentStatusField?: Prisma.SortOrder
+  d4signDocumentAttachField?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -446,6 +490,8 @@ export type SettingCreateWithoutAppInput = {
   dealSettings?: string | null
   verifySettings?: string | null
   contactSettings?: string | null
+  d4signDocumentStatusField?: string | null
+  d4signDocumentAttachField?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -457,6 +503,8 @@ export type SettingUncheckedCreateWithoutAppInput = {
   dealSettings?: string | null
   verifySettings?: string | null
   contactSettings?: string | null
+  d4signDocumentStatusField?: string | null
+  d4signDocumentAttachField?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -484,6 +532,8 @@ export type SettingUpdateWithoutAppInput = {
   dealSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifySettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentStatusField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentAttachField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -495,6 +545,8 @@ export type SettingUncheckedUpdateWithoutAppInput = {
   dealSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifySettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactSettings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentStatusField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  d4signDocumentAttachField?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -509,6 +561,8 @@ export type SettingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   dealSettings?: boolean
   verifySettings?: boolean
   contactSettings?: boolean
+  d4signDocumentStatusField?: boolean
+  d4signDocumentAttachField?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   app?: boolean | Prisma.CoreAppDefaultArgs<ExtArgs>
@@ -524,11 +578,13 @@ export type SettingSelectScalar = {
   dealSettings?: boolean
   verifySettings?: boolean
   contactSettings?: boolean
+  d4signDocumentStatusField?: boolean
+  d4signDocumentAttachField?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SettingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appId" | "fields" | "groups" | "dealSettings" | "verifySettings" | "contactSettings" | "createdAt" | "updatedAt", ExtArgs["result"]["setting"]>
+export type SettingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appId" | "fields" | "groups" | "dealSettings" | "verifySettings" | "contactSettings" | "d4signDocumentStatusField" | "d4signDocumentAttachField" | "createdAt" | "updatedAt", ExtArgs["result"]["setting"]>
 export type SettingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   app?: boolean | Prisma.CoreAppDefaultArgs<ExtArgs>
 }
@@ -546,6 +602,8 @@ export type $SettingPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     dealSettings: string | null
     verifySettings: string | null
     contactSettings: string | null
+    d4signDocumentStatusField: string | null
+    d4signDocumentAttachField: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["setting"]>
@@ -925,6 +983,8 @@ export interface SettingFieldRefs {
   readonly dealSettings: Prisma.FieldRef<"Setting", 'String'>
   readonly verifySettings: Prisma.FieldRef<"Setting", 'String'>
   readonly contactSettings: Prisma.FieldRef<"Setting", 'String'>
+  readonly d4signDocumentStatusField: Prisma.FieldRef<"Setting", 'String'>
+  readonly d4signDocumentAttachField: Prisma.FieldRef<"Setting", 'String'>
   readonly createdAt: Prisma.FieldRef<"Setting", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Setting", 'DateTime'>
 }

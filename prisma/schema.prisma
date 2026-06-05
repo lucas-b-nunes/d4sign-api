@@ -79,15 +79,17 @@ model CoreCredential {
 }
 
 model Setting {
-  id              String   @id @default(cuid())
-  appId           String   @unique @map("app_id")
-  fields          String?  @db.Text
-  groups          String?  @db.Text
-  dealSettings    String?  @map("deal_settings") @db.Text
-  verifySettings  String?  @map("verify_settings") @db.Text
-  contactSettings String?  @map("contact_settings") @db.Text
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  id                         String   @id @default(cuid())
+  appId                      String   @unique @map("app_id")
+  fields                     String?  @db.Text
+  groups                     String?  @db.Text
+  dealSettings               String?  @map("deal_settings") @db.Text
+  verifySettings             String?  @map("verify_settings") @db.Text
+  contactSettings            String?  @map("contact_settings") @db.Text
+  d4signDocumentStatusField String?  @map("d4sign_document_status_field")
+  d4signDocumentAttachField String?  @map("d4sign_document_attach_field")
+  createdAt                  DateTime @default(now()) @map("created_at")
+  updatedAt                  DateTime @updatedAt @map("updated_at")
 
   app CoreApp @relation(fields: [appId], references: [id], onDelete: Cascade)
 
