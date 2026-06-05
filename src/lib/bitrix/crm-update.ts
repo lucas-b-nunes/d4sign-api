@@ -1,5 +1,6 @@
-import { bitrixRestPostForm, refreshBitrixToken } from "@/lib/bitrix/bitrix24";
+import { bitrixRestPostForm } from "@/lib/bitrix/bitrix24";
 import type { AppAuth } from "@/lib/bitrix/bitrix24";
+import { ensureValidAccessToken } from "@/lib/bitrix/access-token";
 import { prisma } from "@/lib/db";
 
 export function bitrixApiError(res: unknown): string | null {
@@ -9,25 +10,17 @@ export function bitrixApiError(res: unknown): string | null {
   return null;
 }
 
-/** Renova token Bitrix e persiste no banco quando possível. */
-export async function resolveBitrixAccessToken(auth: AppAuth & { appId: string }): Promise<string> {
-  let accessToken = auth.accessToken;
-  const tok = await refreshBitrixToken({
-    clientId: auth.clientId,
-    clientSecret: auth.clientSecret,
-    refreshToken: auth.refreshToken,
+/** Renova token Bitrix e persiste no banco quando expirado. */
+export async function resolveBitrixAccessToken(
+  auth: AppAuth & { appId: string; expiresAt?: Date },
+): Promise<string> {
+  const cred = await prisma.coreCredential.findUnique({
+    where: { appId: auth.appId },
   });
-  if (tok?.access_token) {
-    accessToken = tok.access_token;
-    await prisma.coreCredential.update({
-      where: { appId: auth.appId },
-      data: {
-        accessToken: tok.access_token,
-        refreshToken: tok.refresh_token ?? auth.refreshToken,
-      },
-    });
-  }
-  return accessToken;
+  if (!cred) return auth.accessToken;
+
+  const token = await ensureValidAccessToken(cred);
+  return token ?? auth.accessToken;
 }
 
 export async function bitrixUpdateCrmEntity(

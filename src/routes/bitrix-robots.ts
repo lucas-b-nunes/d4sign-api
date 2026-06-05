@@ -8,6 +8,10 @@ import {
   prismaticUpdateSubscriptionGroups,
 } from "@/lib/integration/prismatic";
 import { refreshBitrixToken, bitrixRestGet } from "@/lib/bitrix/bitrix24";
+import {
+  bitrixAddTimelineComment,
+  formatDocumentSentComment,
+} from "@/lib/bitrix/timeline-comment";
 import { findTenantByMemberId, findTenantByDomain, getFirstApp } from "@/lib/tenant";
 import {
   buildD4SignTemplatePayload,
@@ -346,6 +350,22 @@ export async function handleEnviarDocumento(c: Context) {
         meta: { uuidDoc, entity, entity_id: entityId, templateId },
       },
     });
+
+    try {
+      await bitrixAddTimelineComment(domain.name, accessToken, {
+        entityType: entity,
+        entityId,
+        comment: formatDocumentSentComment({
+          documentName,
+          uuidDoc,
+          templateName: mapping.templateName,
+          signers: emails,
+        }),
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error("[enviar-documento] falha ao adicionar comentário na timeline:", msg);
+    }
   }
 
   // Sinalizar o workflow Bitrix para continuar (USE_SUBSCRIPTION=Y)

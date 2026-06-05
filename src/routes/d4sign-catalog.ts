@@ -1,11 +1,16 @@
 import type { Context } from "hono";
 import { prisma } from "@/lib/db";
 import { findTenantByMemberId, getFirstApp } from "@/lib/tenant";
+import { TtlCache } from "@/lib/cache/ttl-cache";
 import {
   d4signListSafes,
   d4signListTemplates,
   type D4SignTemplate,
 } from "@/lib/d4sign/client";
+
+/** Templates D4Sign mudam raramente durante uma sessão de configuração. */
+const templatesCache = new TtlCache<D4SignTemplate[]>(2 * 60 * 1000);
+const safesCache = new TtlCache<Awaited<ReturnType<typeof d4signListSafes>>>(2 * 60 * 1000);
 
 function getMemberId(c: Context): string | null {
   return c.req.query("memberId") ?? null;
@@ -27,10 +32,15 @@ export async function handleListSafes(c: Context) {
   const resolved = await resolveAppAndCreds(memberId);
   if (!resolved) return c.json({ error: "not_found_or_no_credentials" }, 404);
 
-  const safes = await d4signListSafes({
-    tokenApi: resolved.creds.tokenApi,
-    cryptKey: resolved.creds.cryptKey,
-  });
+  const cacheKey = resolved.app.id;
+  const cachedSafes = safesCache.get(cacheKey);
+  const safes =
+    cachedSafes ??
+    (await d4signListSafes({
+      tokenApi: resolved.creds.tokenApi,
+      cryptKey: resolved.creds.cryptKey,
+    }));
+  if (!cachedSafes) safesCache.set(cacheKey, safes);
 
   return c.json({ safes, currentSafeUuid: resolved.creds.defaultSafeUuid ?? null });
 }
@@ -63,6 +73,10 @@ export async function handleListTemplates(c: Context) {
   const resolved = await resolveAppAndCreds(memberId);
   if (!resolved) return c.json({ error: "not_found_or_no_credentials" }, 404);
 
+  const cacheKey = resolved.app.id;
+  const cached = templatesCache.get(cacheKey);
+  if (cached) return c.json({ templates: cached });
+
   const raw = await d4signListTemplates({
     tokenApi: resolved.creds.tokenApi,
     cryptKey: resolved.creds.cryptKey,
@@ -70,6 +84,7 @@ export async function handleListTemplates(c: Context) {
 
   // Normalizar para array
   const templates = Object.values(raw as Record<string, D4SignTemplate>);
+  templatesCache.set(cacheKey, templates);
   return c.json({ templates });
 }
 

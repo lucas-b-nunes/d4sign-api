@@ -1,6 +1,8 @@
 import type { Context } from "hono";
 import { findTenantByMemberId, getFirstApp, toAppAuth } from "@/lib/tenant";
-import { bitrixRestGet, refreshBitrixToken } from "@/lib/bitrix/bitrix24";
+import { bitrixRestGet } from "@/lib/bitrix/bitrix24";
+import { ensureValidAccessToken } from "@/lib/bitrix/access-token";
+import { TtlCache } from "@/lib/cache/ttl-cache";
 import { prisma } from "@/lib/db";
 import { ensureBizprocEnviarDocumento } from "@/lib/bitrix/bizproc-enviar-documento";
 
@@ -10,32 +12,15 @@ export type DealField = {
   type: string;
 };
 
-async function getValidAccessToken(app: ReturnType<typeof getFirstApp> & object) {
-  const cred = (app as { credentials?: { appId: string; clientId: string; clientSecret: string; refreshToken: string; accessToken: string | null } }).credentials;
-  if (!cred) return null;
-
-  let accessToken = cred.accessToken ?? "";
-  const tok = await refreshBitrixToken({
-    clientId: cred.clientId,
-    clientSecret: cred.clientSecret,
-    refreshToken: cred.refreshToken,
-  });
-  if (tok?.access_token) {
-    accessToken = tok.access_token;
-    await prisma.coreCredential.update({
-      where: { appId: cred.appId },
-      data: {
-        accessToken: tok.access_token,
-        refreshToken: tok.refresh_token ?? cred.refreshToken,
-      },
-    });
-  }
-  return accessToken;
-}
+/** Campos de Deal mudam raramente — cache de 5 min por tenant. */
+const dealFieldsCache = new TtlCache<DealField[]>(5 * 60 * 1000);
 
 export async function handleGetDealFields(c: Context) {
   const memberId = c.req.query("memberId");
   if (!memberId) return c.json({ error: "memberId required" }, 400);
+
+  const cached = dealFieldsCache.get(memberId);
+  if (cached) return c.json({ fields: cached });
 
   const tenant = await findTenantByMemberId(memberId);
   const app = tenant ? getFirstApp(tenant) : null;
@@ -43,7 +28,7 @@ export async function handleGetDealFields(c: Context) {
 
   if (!app.credentials) return c.json({ error: "credentials_missing" }, 404);
 
-  const accessToken = await getValidAccessToken(app as never);
+  const accessToken = await ensureValidAccessToken(app.credentials);
   if (!accessToken) return c.json({ error: "token_unavailable" }, 500);
 
   const result = (await bitrixRestGet(
@@ -60,6 +45,7 @@ export async function handleGetDealFields(c: Context) {
     }))
     .sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
 
+  dealFieldsCache.set(memberId, fields);
   return c.json({ fields });
 }
 
@@ -75,7 +61,7 @@ export async function handleSyncRobot(c: Context) {
 
   if (!app.credentials) return c.json({ error: "credentials_missing" }, 404);
 
-  const accessToken = await getValidAccessToken(app as never);
+  const accessToken = await ensureValidAccessToken(app.credentials);
   if (!accessToken) return c.json({ error: "token_unavailable" }, 500);
 
   // Buscar todos os template mappings do app
