@@ -80,6 +80,7 @@ export async function handleGetTenantDocuments(c: Context) {
       entityType: d.entityType,
       entityId: d.entityId,
       statusName: d.statusName,
+      statusId: d.statusId,
       updatedAt: d.updatedAt.toISOString(),
     })),
   });

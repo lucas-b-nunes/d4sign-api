@@ -39,7 +39,7 @@ function resolveStatus(body: Record<string, unknown>): {
   if (typePost && TYPE_POST_STATUS[typePost]) {
     const mapped = TYPE_POST_STATUS[typePost];
     return {
-      statusName: message || mapped.statusName,
+      statusName: mapped.statusName,
       statusId: mapped.statusId,
     };
   }
