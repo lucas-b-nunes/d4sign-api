@@ -294,8 +294,10 @@ export async function handleEnviarDocumento(c: Context) {
     const webhookUrl = `${(getPublicAppUrl() ?? "").replace(/\/$/, "")}/api/webhooks/d4sign`;
     try {
       await d4signConfigureWebhook(d4config, uuidDoc, webhookUrl);
-    } catch {
-      // Não fatal — continua o fluxo
+      console.log("[enviar-documento] webhook configurado:", webhookUrl);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error("[enviar-documento] falha ao configurar webhook:", msg);
     }
 
     // Adicionar signatários (signersEmails é um JSON array de strings no banco)
