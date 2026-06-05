@@ -7,6 +7,7 @@ import {
   d4signListTemplates,
   type D4SignTemplate,
 } from "@/lib/d4sign/client";
+import { isValidSignerSpec } from "@/lib/bitrix/resolve-signers";
 
 /** Templates D4Sign mudam raramente durante uma sessão de configuração. */
 const templatesCache = new TtlCache<D4SignTemplate[]>(2 * 60 * 1000);
@@ -122,6 +123,20 @@ export async function handleUpsertTemplateMapping(c: Context) {
   }>();
 
   if (!body.templateName) return c.json({ error: "templateName required" }, 400);
+
+  if (body.signersEmails !== undefined) {
+    if (!Array.isArray(body.signersEmails)) {
+      return c.json({ error: "signersEmails must be an array" }, 400);
+    }
+    for (const spec of body.signersEmails) {
+      if (typeof spec !== "string" || !isValidSignerSpec(spec)) {
+        return c.json(
+          { error: `Signatário inválido: ${String(spec)}. Use e-mail, {=Contact:all} ou {=Document:CAMPO}.` },
+          400,
+        );
+      }
+    }
+  }
 
   const tenant = await findTenantByMemberId(memberId);
   const app = tenant ? getFirstApp(tenant) : null;

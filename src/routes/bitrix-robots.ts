@@ -1,4 +1,4 @@
-import type { Context } from "hono";
+﻿import type { Context } from "hono";
 import { prisma } from "@/lib/db";
 import { usePrismaticBridge } from "@/lib/feature-flags";
 import {
@@ -12,6 +12,7 @@ import {
   bitrixAddTimelineComment,
   formatDocumentSentComment,
 } from "@/lib/bitrix/timeline-comment";
+import { resolveSignerEmails } from "@/lib/bitrix/resolve-signers";
 import { findTenantByMemberId, findTenantByDomain, getFirstApp } from "@/lib/tenant";
 import {
   buildD4SignTemplatePayload,
@@ -111,7 +112,7 @@ async function fetchCrmEntity(
 }
 
 /**
- * Resolve as variáveis do template substituindo caminhos de campo CRM pelos valores reais.
+ * Resolve as variÃ¡veis do template substituindo caminhos de campo CRM pelos valores reais.
  * mappings: { "nome_completo": "CONTACT_NAME", "razao_social": "COMPANY_TITLE" }
  * crmData: campos da entidade Bitrix
  */
@@ -139,7 +140,7 @@ export async function handleEnviarDocumento(c: Context) {
   const resolvedTenant = await resolveTenantFromRobotBody(body);
   if (!resolvedTenant) {
     return unauthorized(c, "tenant_not_found", {
-      hint: "Reinstale o app no Bitrix ou verifique se auth.member_id / auth.domain estão no payload.",
+      hint: "Reinstale o app no Bitrix ou verifique se auth.member_id / auth.domain estÃ£o no payload.",
       hasAuth: Boolean(extractAuth(body)),
       domain: extractAuthDomain(body) ?? null,
     });
@@ -191,15 +192,15 @@ export async function handleEnviarDocumento(c: Context) {
     const templateId = templateIdFromBody;
 
     if (!templateId) {
-      return badRequest(c, "properties.template_id obrigatório", {
+      return badRequest(c, "properties.template_id obrigatÃ³rio", {
         properties: body.properties ?? null,
-        hint: "Selecione um template no robô BizProc e sincronize em Operação → Templates.",
+        hint: "Selecione um template no robÃ´ BizProc e sincronize em OperaÃ§Ã£o â†’ Templates.",
       });
     }
 
     const safeUuid = d4cred.defaultSafeUuid;
     if (!safeUuid) {
-      return badRequest(c, "Cofre padrão não configurado. Acesse Configurações → Globais.");
+      return badRequest(c, "Cofre padrÃ£o nÃ£o configurado. Acesse ConfiguraÃ§Ãµes â†’ Globais.");
     }
 
     // Buscar mapeamento do template (inclui documentName e signersEmails)
@@ -209,7 +210,7 @@ export async function handleEnviarDocumento(c: Context) {
     if (!mapping) {
       return badRequest(
         c,
-        `Mapeamento do template "${templateId}" não encontrado. Configure em Operação → Templates.`,
+        `Mapeamento do template "${templateId}" nÃ£o encontrado. Configure em OperaÃ§Ã£o â†’ Templates.`,
         { templateId },
       );
     }
@@ -218,7 +219,7 @@ export async function handleEnviarDocumento(c: Context) {
     const rawDocumentName = mapping.documentName ?? `Documento ${entity} ${entityId}`;
     const signersEmailsRaw = mapping.signersEmails;
 
-    // Obter access token válido (prioriza token enviado pelo Bitrix no auth)
+    // Obter access token vÃ¡lido (prioriza token enviado pelo Bitrix no auth)
     const cred = app.credentials;
     const authFromBody = extractAuth(body);
     let accessToken =
@@ -248,7 +249,7 @@ export async function handleEnviarDocumento(c: Context) {
 
     const documentName = resolveDocumentName(rawDocumentName, crmData, entityId);
 
-    // Resolver variáveis do template a partir do mapeamento salvo
+    // Resolver variÃ¡veis do template a partir do mapeamento salvo
     const rawMappings = mapping.mappings as Record<string, string>;
     const resolvedVars = resolveTemplateVariables(rawMappings, crmData);
     const templatePayload = buildD4SignTemplatePayload(resolvedVars);
@@ -305,11 +306,34 @@ export async function handleEnviarDocumento(c: Context) {
     }
 
     // Adicionar signatários (signersEmails é um JSON array de strings no banco)
-    const emails: string[] = Array.isArray(signersEmailsRaw)
+    const signerSpecs: string[] = Array.isArray(signersEmailsRaw)
       ? (signersEmailsRaw as string[]).filter(Boolean)
       : typeof signersEmailsRaw === "string"
         ? (signersEmailsRaw as string).split(",").map((e) => e.trim()).filter(Boolean)
         : [];
+
+    let emails: string[] = [];
+    try {
+      emails = await resolveSignerEmails({
+        domain: domain.name,
+        accessToken,
+        entityType: entity,
+        entityId,
+        specs: signerSpecs,
+        crmData,
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      return badRequest(c, msg);
+    }
+
+    if (emails.length === 0) {
+      return badRequest(c, "Nenhum signatário válido. Configure signatários em Operação → Templates.", {
+        specs: signerSpecs,
+      });
+    }
+
+    console.log("[enviar-documento] signatarios resolvidos:", { specs: signerSpecs, emails });
 
     if (emails.length > 0) {
       const signers = emails.map((email) => ({
@@ -364,7 +388,7 @@ export async function handleEnviarDocumento(c: Context) {
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      console.error("[enviar-documento] falha ao adicionar comentário na timeline:", msg);
+      console.error("[enviar-documento] falha ao adicionar comentÃ¡rio na timeline:", msg);
     }
   }
 
@@ -415,12 +439,12 @@ export async function handleCancelarDocumento(c: Context) {
   const memberId =
     auth && typeof auth.member_id === "string" ? auth.member_id : undefined;
   if (!memberId) {
-    return c.json({ error: "Usuário não encontrado" }, 401);
+    return c.json({ error: "UsuÃ¡rio nÃ£o encontrado" }, 401);
   }
 
   const resolved = await resolveAppByMemberId(memberId);
   if (!resolved) {
-    return c.json({ error: "Usuário não encontrado" }, 401);
+    return c.json({ error: "UsuÃ¡rio nÃ£o encontrado" }, 401);
   }
   const { domain, app } = resolved;
 
@@ -467,7 +491,7 @@ export async function handleSaveSettings(c: Context) {
     return c.json({ error: "invalid_id" }, 400);
   }
 
-  // id agora é core_apps.id
+  // id agora Ã© core_apps.id
   const app = await prisma.coreApp.findUnique({
     where: { id },
     include: { domain: true },
