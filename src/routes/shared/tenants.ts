@@ -13,7 +13,7 @@ export async function handleResolveTenant(c: Context) {
   if (!coreDomain) {
     return c.json({ error: "not_found" }, 404);
   }
-  return c.json({ memberId: coreDomain.memberId });
+  return c.json({ memberId: coreDomain.memberId, platform: coreDomain.platform });
 }
 
 export async function handleGetTenant(c: Context) {
@@ -31,6 +31,7 @@ export async function handleGetTenant(c: Context) {
     id: tenant.id,
     domain: tenant.name,
     memberId: tenant.memberId,
+    platform: tenant.platform,
     status: app.status,
     d4signConfigured: Boolean(app.d4signCredential),
     defaultSafeUuid: app.d4signCredential?.defaultSafeUuid ?? null,

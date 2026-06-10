@@ -1,28 +1,26 @@
 import type { Context } from "hono";
 import { prisma } from "@/lib/db";
-import { findTenantByMemberId, getFirstApp } from "@/lib/tenant";
+import { getTenantIdFromQuery, resolveTenantApp } from "@/lib/tenant";
 import { TtlCache } from "@/lib/cache/ttl-cache";
 import {
   d4signListSafes,
   d4signListTemplates,
   type D4SignTemplate,
 } from "@/lib/d4sign/client";
-import { isValidSignerSpec } from "@/lib/bitrix/resolve-signers";
+import { isValidSignerSpec } from "@/lib/signer-spec";
 
 /** Templates D4Sign mudam raramente durante uma sessão de configuração. */
 const templatesCache = new TtlCache<D4SignTemplate[]>(2 * 60 * 1000);
 const safesCache = new TtlCache<Awaited<ReturnType<typeof d4signListSafes>>>(2 * 60 * 1000);
 
 function getMemberId(c: Context): string | null {
-  return c.req.query("memberId") ?? null;
+  return getTenantIdFromQuery(c);
 }
 
 async function resolveAppAndCreds(memberId: string) {
-  const tenant = await findTenantByMemberId(memberId);
-  if (!tenant) return null;
-  const app = getFirstApp(tenant);
-  if (!app?.d4signCredential) return null;
-  return { app, creds: app.d4signCredential };
+  const resolved = await resolveTenantApp(memberId);
+  if (!resolved?.app.d4signCredential) return null;
+  return { app: resolved.app, creds: resolved.app.d4signCredential };
 }
 
 // GET /api/d4sign/safes?memberId=
@@ -94,12 +92,11 @@ export async function handleGetTemplateMappings(c: Context) {
   const memberId = getMemberId(c);
   if (!memberId) return c.json({ error: "memberId required" }, 400);
 
-  const tenant = await findTenantByMemberId(memberId);
-  const app = tenant ? getFirstApp(tenant) : null;
-  if (!app) return c.json({ error: "not_found" }, 404);
+  const resolved = await resolveTenantApp(memberId);
+  if (!resolved) return c.json({ error: "not_found" }, 404);
 
   const mappings = await prisma.templateMapping.findMany({
-    where: { appId: app.id },
+    where: { appId: resolved.app.id },
     orderBy: { templateName: "asc" },
   });
 
@@ -138,9 +135,9 @@ export async function handleUpsertTemplateMapping(c: Context) {
     }
   }
 
-  const tenant = await findTenantByMemberId(memberId);
-  const app = tenant ? getFirstApp(tenant) : null;
-  if (!app) return c.json({ error: "not_found" }, 404);
+  const resolved = await resolveTenantApp(memberId);
+  if (!resolved) return c.json({ error: "not_found" }, 404);
+  const app = resolved.app;
 
   const mapping = await prisma.templateMapping.upsert({
     where: { appId_templateId: { appId: app.id, templateId } },

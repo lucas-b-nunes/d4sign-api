@@ -52,9 +52,11 @@ export async function handleInstall(c: Context) {
     create: {
       name: params.domain,
       memberId: params.memberId,
+      platform: "BITRIX24",
     },
     update: {
       memberId: params.memberId,
+      platform: "BITRIX24",
     },
   });
 

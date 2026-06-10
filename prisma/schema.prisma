@@ -12,6 +12,11 @@ enum AppStatus {
   INACTIVE
 }
 
+enum CrmPlatform {
+  BITRIX24
+  HUBSPOT
+}
+
 model CoreAppCode {
   id          String   @id @default(cuid())
   code        String   @unique
@@ -27,14 +32,17 @@ model CoreAppCode {
 }
 
 model CoreDomain {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  memberId  String   @unique @map("member_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String      @id @default(cuid())
+  name      String      @unique
+  /// Identificador do portal na plataforma: member_id (Bitrix24) ou portalId (HubSpot)
+  memberId  String      @unique @map("member_id")
+  platform  CrmPlatform @default(BITRIX24)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
 
   apps CoreApp[]
 
+  @@index([platform])
   @@map("core_domains")
 }
 

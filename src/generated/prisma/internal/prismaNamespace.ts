@@ -1196,6 +1196,7 @@ export const CoreDomainScalarFieldEnum = {
   id: 'id',
   name: 'name',
   memberId: 'memberId',
+  platform: 'platform',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1529,6 +1530,13 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'CrmPlatform'
+ */
+export type EnumCrmPlatformFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CrmPlatform'>
     
 
 

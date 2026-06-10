@@ -1,18 +1,14 @@
-import {
-  d4signDownloadDocument,
-  type D4SignClientConfig,
-} from "@/lib/d4sign/client";
-import {
-  bitrixUpdateCrmEntity,
-  resolveBitrixAccessToken,
-} from "@/lib/bitrix/crm-update";
-import {
-  bitrixAddTimelineComment,
-  formatDocumentStatusComment,
-  type TimelineCommentFile,
-} from "@/lib/bitrix/timeline-comment";
-import { toAppAuth } from "@/lib/tenant";
-import type { CoreDomain, CoreApp, Setting, D4SignCredential, CoreCredential } from "@/generated/prisma/client";
+import { createD4SignAdapter } from "@/lib/integrations/signature/d4sign-adapter";
+import { createCrmAdapterForApp } from "@/lib/integrations/crm/for-app";
+import type { CrmNoteAttachment } from "@/lib/integrations/crm/types";
+import { formatDocumentStatusComment } from "@/core/document-comments";
+import type {
+  CoreDomain,
+  CoreApp,
+  Setting,
+  D4SignCredential,
+  CoreCredential,
+} from "@/generated/prisma/client";
 import { extractTypePost } from "@/lib/d4sign/parse-webhook-body";
 import {
   addSignedSignerEmail,
@@ -111,32 +107,6 @@ function resolveStatusWithSignerProgress(
   return { statusName, statusId, signedSignerEmails, signerTotal };
 }
 
-async function downloadSignedPdf(
-  config: D4SignClientConfig,
-  uuidDoc: string,
-): Promise<{ fileName: string; base64: string }> {
-  const meta = await d4signDownloadDocument(config, uuidDoc);
-  console.log("[webhook-d4sign] download D4Sign:", {
-    name: meta.name,
-    urlPreview: meta.url?.slice(0, 80),
-  });
-
-  if (!meta.url) throw new Error("D4Sign download não retornou URL");
-
-  const res = await fetch(meta.url, { cache: "no-store" });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Falha ao baixar PDF: HTTP ${res.status} — ${text.slice(0, 200)}`);
-  }
-
-  const buffer = Buffer.from(await res.arrayBuffer());
-  const baseName = meta.name?.trim() || `${uuidDoc}.pdf`;
-  const fileName = baseName.toLowerCase().endsWith(".pdf") ? baseName : `${baseName}.pdf`;
-
-  console.log("[webhook-d4sign] PDF baixado:", { fileName, bytes: buffer.length });
-  return { fileName, base64: buffer.toString("base64") };
-}
-
 export async function processD4SignWebhook(
   doc: DocumentRow,
   body: Record<string, unknown>,
@@ -148,7 +118,6 @@ export async function processD4SignWebhook(
   signerTotal: number | null;
 }> {
   const { app } = doc;
-  const cred = app.credentials;
   const d4cred = app.d4signCredential;
   const setting = app.setting;
 
@@ -156,6 +125,7 @@ export async function processD4SignWebhook(
     uuidDoc: doc.uuidDoc,
     entityType: doc.entityType,
     entityId: doc.entityId,
+    platform: app.domain.platform,
     type_post: extractTypePost(body),
     message: body.message,
     email: body.email,
@@ -167,8 +137,9 @@ export async function processD4SignWebhook(
     resolveStatusWithSignerProgress(body, doc);
   let bitrixUpdated = false;
 
-  if (!cred) {
-    console.warn("[webhook-d4sign] credenciais Bitrix ausentes — pulando sync CRM");
+  const crm = await createCrmAdapterForApp(app);
+  if (!crm) {
+    console.warn("[webhook-d4sign] credenciais CRM ausentes — pulando sync");
     return { statusName, statusId, bitrixUpdated, signedSignerEmails, signerTotal };
   }
 
@@ -177,61 +148,52 @@ export async function processD4SignWebhook(
   const typePost = extractTypePost(body);
   const shouldAttachPdf = typePost === "1" && Boolean(attachField);
 
-  const auth = toAppAuth(app.domain, cred);
-  const accessToken = await resolveBitrixAccessToken({ ...auth, appId: app.id });
-
   const fields: Record<string, unknown> = {};
-  let timelineFiles: TimelineCommentFile[] | undefined;
+  let noteAttachments: CrmNoteAttachment[] | undefined;
 
   if (statusField) {
     fields[statusField] = statusName;
-    console.log("[webhook-d4sign] status → Bitrix:", { field: statusField, value: statusName });
+    console.log("[webhook-d4sign] status → CRM:", { field: statusField, value: statusName });
   }
 
   if (shouldAttachPdf) {
     if (!d4cred) {
       throw new Error("Credenciais D4Sign ausentes para download do PDF");
     }
-    const d4config: D4SignClientConfig = {
+    const signature = createD4SignAdapter({
       tokenApi: d4cred.tokenApi,
       cryptKey: d4cred.cryptKey,
-    };
-    const pdf = await downloadSignedPdf(d4config, doc.uuidDoc);
-    fields[attachField!] = { fileData: [pdf.fileName, pdf.base64] };
-    timelineFiles = [[pdf.fileName, pdf.base64]];
-    console.log("[webhook-d4sign] anexo → Bitrix:", {
+    });
+    const pdf = await signature.downloadDocument(doc.uuidDoc);
+    fields[attachField!] = await crm.encodeFileFieldValue(pdf.fileName, pdf.base64);
+    noteAttachments = [pdf];
+    console.log("[webhook-d4sign] anexo → CRM:", {
       field: attachField,
       fileName: pdf.fileName,
     });
   } else if (typePost === "1" && d4cred) {
-    // Documento finalizado: anexa PDF no comentário da timeline mesmo sem campo de anexo
+    // Documento finalizado: anexa PDF na nota mesmo sem campo de anexo
     try {
-      const d4config: D4SignClientConfig = {
+      const signature = createD4SignAdapter({
         tokenApi: d4cred.tokenApi,
         cryptKey: d4cred.cryptKey,
-      };
-      const pdf = await downloadSignedPdf(d4config, doc.uuidDoc);
-      timelineFiles = [[pdf.fileName, pdf.base64]];
+      });
+      const pdf = await signature.downloadDocument(doc.uuidDoc);
+      noteAttachments = [pdf];
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      console.warn("[webhook-d4sign] PDF para timeline ignorado:", msg);
+      console.warn("[webhook-d4sign] PDF para nota ignorado:", msg);
     }
   }
 
   if (Object.keys(fields).length > 0) {
-    await bitrixUpdateCrmEntity(
-      app.domain.name,
-      accessToken,
-      doc.entityType,
-      doc.entityId,
-      fields,
-    );
+    await crm.updateEntity(doc.entityType, doc.entityId, fields);
     bitrixUpdated = true;
   }
 
   const email = typeof body.email === "string" ? body.email : undefined;
   const message = typeof body.message === "string" ? body.message : undefined;
-  const timelineComment = formatDocumentStatusComment({
+  const noteText = formatDocumentStatusComment({
     uuidDoc: doc.uuidDoc,
     statusName,
     previousStatus: doc.statusName,
@@ -240,22 +202,17 @@ export async function processD4SignWebhook(
   });
 
   try {
-    await bitrixAddTimelineComment(app.domain.name, accessToken, {
-      entityType: doc.entityType,
-      entityId: doc.entityId,
-      comment: timelineComment,
-      files: timelineFiles,
-    });
+    await crm.addNote(doc.entityType, doc.entityId, noteText, noteAttachments);
     bitrixUpdated = true;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    console.error("[webhook-d4sign] falha ao adicionar comentário na timeline:", msg);
+    console.error("[webhook-d4sign] falha ao adicionar nota CRM:", msg);
     if (!bitrixUpdated) throw e;
   }
 
   if (!statusField && !shouldAttachPdf) {
     console.log(
-      "[webhook-d4sign] campos globais não configurados — timeline atualizada mesmo assim",
+      "[webhook-d4sign] campos globais não configurados — nota CRM adicionada mesmo assim",
     );
   }
 

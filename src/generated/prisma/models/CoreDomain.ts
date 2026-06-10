@@ -28,6 +28,7 @@ export type CoreDomainMinAggregateOutputType = {
   id: string | null
   name: string | null
   memberId: string | null
+  platform: $Enums.CrmPlatform | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -36,6 +37,7 @@ export type CoreDomainMaxAggregateOutputType = {
   id: string | null
   name: string | null
   memberId: string | null
+  platform: $Enums.CrmPlatform | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +46,7 @@ export type CoreDomainCountAggregateOutputType = {
   id: number
   name: number
   memberId: number
+  platform: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -54,6 +57,7 @@ export type CoreDomainMinAggregateInputType = {
   id?: true
   name?: true
   memberId?: true
+  platform?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -62,6 +66,7 @@ export type CoreDomainMaxAggregateInputType = {
   id?: true
   name?: true
   memberId?: true
+  platform?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -70,6 +75,7 @@ export type CoreDomainCountAggregateInputType = {
   id?: true
   name?: true
   memberId?: true
+  platform?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -151,6 +157,7 @@ export type CoreDomainGroupByOutputType = {
   id: string
   name: string
   memberId: string
+  platform: $Enums.CrmPlatform
   createdAt: Date
   updatedAt: Date
   _count: CoreDomainCountAggregateOutputType | null
@@ -180,6 +187,7 @@ export type CoreDomainWhereInput = {
   id?: Prisma.StringFilter<"CoreDomain"> | string
   name?: Prisma.StringFilter<"CoreDomain"> | string
   memberId?: Prisma.StringFilter<"CoreDomain"> | string
+  platform?: Prisma.EnumCrmPlatformFilter<"CoreDomain"> | $Enums.CrmPlatform
   createdAt?: Prisma.DateTimeFilter<"CoreDomain"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CoreDomain"> | Date | string
   apps?: Prisma.CoreAppListRelationFilter
@@ -189,6 +197,7 @@ export type CoreDomainOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   memberId?: Prisma.SortOrder
+  platform?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   apps?: Prisma.CoreAppOrderByRelationAggregateInput
@@ -202,6 +211,7 @@ export type CoreDomainWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.CoreDomainWhereInput | Prisma.CoreDomainWhereInput[]
   OR?: Prisma.CoreDomainWhereInput[]
   NOT?: Prisma.CoreDomainWhereInput | Prisma.CoreDomainWhereInput[]
+  platform?: Prisma.EnumCrmPlatformFilter<"CoreDomain"> | $Enums.CrmPlatform
   createdAt?: Prisma.DateTimeFilter<"CoreDomain"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CoreDomain"> | Date | string
   apps?: Prisma.CoreAppListRelationFilter
@@ -211,6 +221,7 @@ export type CoreDomainOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   memberId?: Prisma.SortOrder
+  platform?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.CoreDomainCountOrderByAggregateInput
@@ -225,6 +236,7 @@ export type CoreDomainScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"CoreDomain"> | string
   name?: Prisma.StringWithAggregatesFilter<"CoreDomain"> | string
   memberId?: Prisma.StringWithAggregatesFilter<"CoreDomain"> | string
+  platform?: Prisma.EnumCrmPlatformWithAggregatesFilter<"CoreDomain"> | $Enums.CrmPlatform
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CoreDomain"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CoreDomain"> | Date | string
 }
@@ -233,6 +245,7 @@ export type CoreDomainCreateInput = {
   id?: string
   name: string
   memberId: string
+  platform?: $Enums.CrmPlatform
   createdAt?: Date | string
   updatedAt?: Date | string
   apps?: Prisma.CoreAppCreateNestedManyWithoutDomainInput
@@ -242,6 +255,7 @@ export type CoreDomainUncheckedCreateInput = {
   id?: string
   name: string
   memberId: string
+  platform?: $Enums.CrmPlatform
   createdAt?: Date | string
   updatedAt?: Date | string
   apps?: Prisma.CoreAppUncheckedCreateNestedManyWithoutDomainInput
@@ -251,6 +265,7 @@ export type CoreDomainUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   memberId?: Prisma.StringFieldUpdateOperationsInput | string
+  platform?: Prisma.EnumCrmPlatformFieldUpdateOperationsInput | $Enums.CrmPlatform
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apps?: Prisma.CoreAppUpdateManyWithoutDomainNestedInput
@@ -260,6 +275,7 @@ export type CoreDomainUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   memberId?: Prisma.StringFieldUpdateOperationsInput | string
+  platform?: Prisma.EnumCrmPlatformFieldUpdateOperationsInput | $Enums.CrmPlatform
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apps?: Prisma.CoreAppUncheckedUpdateManyWithoutDomainNestedInput
@@ -269,6 +285,7 @@ export type CoreDomainCreateManyInput = {
   id?: string
   name: string
   memberId: string
+  platform?: $Enums.CrmPlatform
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -277,6 +294,7 @@ export type CoreDomainUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   memberId?: Prisma.StringFieldUpdateOperationsInput | string
+  platform?: Prisma.EnumCrmPlatformFieldUpdateOperationsInput | $Enums.CrmPlatform
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -285,6 +303,7 @@ export type CoreDomainUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   memberId?: Prisma.StringFieldUpdateOperationsInput | string
+  platform?: Prisma.EnumCrmPlatformFieldUpdateOperationsInput | $Enums.CrmPlatform
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -299,6 +318,7 @@ export type CoreDomainCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   memberId?: Prisma.SortOrder
+  platform?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -307,6 +327,7 @@ export type CoreDomainMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   memberId?: Prisma.SortOrder
+  platform?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -315,6 +336,7 @@ export type CoreDomainMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   memberId?: Prisma.SortOrder
+  platform?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -322,6 +344,10 @@ export type CoreDomainMinOrderByAggregateInput = {
 export type CoreDomainScalarRelationFilter = {
   is?: Prisma.CoreDomainWhereInput
   isNot?: Prisma.CoreDomainWhereInput
+}
+
+export type EnumCrmPlatformFieldUpdateOperationsInput = {
+  set?: $Enums.CrmPlatform
 }
 
 export type CoreDomainCreateNestedOneWithoutAppsInput = {
@@ -342,6 +368,7 @@ export type CoreDomainCreateWithoutAppsInput = {
   id?: string
   name: string
   memberId: string
+  platform?: $Enums.CrmPlatform
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -350,6 +377,7 @@ export type CoreDomainUncheckedCreateWithoutAppsInput = {
   id?: string
   name: string
   memberId: string
+  platform?: $Enums.CrmPlatform
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -374,6 +402,7 @@ export type CoreDomainUpdateWithoutAppsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   memberId?: Prisma.StringFieldUpdateOperationsInput | string
+  platform?: Prisma.EnumCrmPlatformFieldUpdateOperationsInput | $Enums.CrmPlatform
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -382,6 +411,7 @@ export type CoreDomainUncheckedUpdateWithoutAppsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   memberId?: Prisma.StringFieldUpdateOperationsInput | string
+  platform?: Prisma.EnumCrmPlatformFieldUpdateOperationsInput | $Enums.CrmPlatform
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -421,6 +451,7 @@ export type CoreDomainSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   id?: boolean
   name?: boolean
   memberId?: boolean
+  platform?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   apps?: boolean | Prisma.CoreDomain$appsArgs<ExtArgs>
@@ -433,11 +464,12 @@ export type CoreDomainSelectScalar = {
   id?: boolean
   name?: boolean
   memberId?: boolean
+  platform?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CoreDomainOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "memberId" | "createdAt" | "updatedAt", ExtArgs["result"]["coreDomain"]>
+export type CoreDomainOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "memberId" | "platform" | "createdAt" | "updatedAt", ExtArgs["result"]["coreDomain"]>
 export type CoreDomainInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   apps?: boolean | Prisma.CoreDomain$appsArgs<ExtArgs>
   _count?: boolean | Prisma.CoreDomainCountOutputTypeDefaultArgs<ExtArgs>
@@ -451,7 +483,11 @@ export type $CoreDomainPayload<ExtArgs extends runtime.Types.Extensions.Internal
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+    /**
+     * Identificador do portal na plataforma: member_id (Bitrix24) ou portalId (HubSpot)
+     */
     memberId: string
+    platform: $Enums.CrmPlatform
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["coreDomain"]>
@@ -827,6 +863,7 @@ export interface CoreDomainFieldRefs {
   readonly id: Prisma.FieldRef<"CoreDomain", 'String'>
   readonly name: Prisma.FieldRef<"CoreDomain", 'String'>
   readonly memberId: Prisma.FieldRef<"CoreDomain", 'String'>
+  readonly platform: Prisma.FieldRef<"CoreDomain", 'CrmPlatform'>
   readonly createdAt: Prisma.FieldRef<"CoreDomain", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"CoreDomain", 'DateTime'>
 }

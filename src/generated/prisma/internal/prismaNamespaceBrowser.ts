@@ -97,6 +97,7 @@ export const CoreDomainScalarFieldEnum = {
   id: 'id',
   name: 'name',
   memberId: 'memberId',
+  platform: 'platform',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

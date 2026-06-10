@@ -15,3 +15,11 @@ export const AppStatus = {
 } as const
 
 export type AppStatus = (typeof AppStatus)[keyof typeof AppStatus]
+
+
+export const CrmPlatform = {
+  BITRIX24: 'BITRIX24',
+  HUBSPOT: 'HUBSPOT'
+} as const
+
+export type CrmPlatform = (typeof CrmPlatform)[keyof typeof CrmPlatform]

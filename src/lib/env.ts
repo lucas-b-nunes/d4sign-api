@@ -15,6 +15,25 @@ export function getBitrixClientCredentials(): {
   };
 }
 
+/** OAuth HubSpot — HUBSPOT_CLIENT_ID / HUBSPOT_CLIENT_SECRET. */
+export function getHubspotClientCredentials(): {
+  clientId: string;
+  clientSecret: string;
+} {
+  return {
+    clientId: process.env.HUBSPOT_CLIENT_ID ?? "",
+    clientSecret: process.env.HUBSPOT_CLIENT_SECRET ?? "",
+  };
+}
+
+/** Escopos OAuth solicitados na instalação do app HubSpot. */
+export function getHubspotScopes(): string {
+  return (
+    process.env.HUBSPOT_SCOPES ??
+    "crm.objects.deals.read crm.objects.deals.write crm.objects.contacts.read crm.objects.companies.read files oauth"
+  );
+}
+
 /** URL pública HTTPS (ngrok) — install, event.bind, robôs. */
 export function getPublicAppUrl(requestOrigin?: string): string {
   return (
