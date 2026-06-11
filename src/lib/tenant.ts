@@ -1,3 +1,4 @@
+import type { Context } from "hono";
 import { prisma } from "@/lib/db";
 import type {
   CoreDomain,
@@ -59,6 +60,32 @@ export async function findTenantByDomain(
 /** Retorna o primeiro (e geralmente único) app instalado do tenant. */
 export function getFirstApp(tenant: TenantWithApps): TenantApp | null {
   return tenant.apps[0] ?? null;
+}
+
+/**
+ * Extrai o identificador de tenant da query string, aceitando todos os aliases
+ * usados pelos frontends: memberId (padrão), member_id (legado Bitrix),
+ * portalId (HubSpot) e tenantId (genérico).
+ */
+export function getTenantIdFromQuery(c: Context): string | null {
+  return (
+    c.req.query("memberId") ??
+    c.req.query("member_id") ??
+    c.req.query("portalId") ??
+    c.req.query("tenantId") ??
+    null
+  );
+}
+
+/** Resolve tenant + primeiro app em um único passo (padrão das rotas /api). */
+export async function resolveTenantApp(
+  tenantId: string,
+): Promise<{ tenant: TenantWithApps; app: TenantApp } | null> {
+  const tenant = await findTenantByMemberId(tenantId);
+  if (!tenant) return null;
+  const app = getFirstApp(tenant);
+  if (!app) return null;
+  return { tenant, app };
 }
 
 /** Constrói um AppAuth a partir do domain + credential, para chamadas Bitrix. */

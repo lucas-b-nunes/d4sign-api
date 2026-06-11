@@ -110,6 +110,23 @@ export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
 }
 
+export type EnumCrmPlatformFilter<$PrismaModel = never> = {
+  equals?: $Enums.CrmPlatform | Prisma.EnumCrmPlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.CrmPlatform[]
+  notIn?: $Enums.CrmPlatform[]
+  not?: Prisma.NestedEnumCrmPlatformFilter<$PrismaModel> | $Enums.CrmPlatform
+}
+
+export type EnumCrmPlatformWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CrmPlatform | Prisma.EnumCrmPlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.CrmPlatform[]
+  notIn?: $Enums.CrmPlatform[]
+  not?: Prisma.NestedEnumCrmPlatformWithAggregatesFilter<$PrismaModel> | $Enums.CrmPlatform
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCrmPlatformFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCrmPlatformFilter<$PrismaModel>
+}
+
 export type EnumAppStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.AppStatus | Prisma.EnumAppStatusFieldRefInput<$PrismaModel>
   in?: $Enums.AppStatus[]
@@ -380,6 +397,23 @@ export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedDateTimeFilter<$PrismaModel>
   _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
+}
+
+export type NestedEnumCrmPlatformFilter<$PrismaModel = never> = {
+  equals?: $Enums.CrmPlatform | Prisma.EnumCrmPlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.CrmPlatform[]
+  notIn?: $Enums.CrmPlatform[]
+  not?: Prisma.NestedEnumCrmPlatformFilter<$PrismaModel> | $Enums.CrmPlatform
+}
+
+export type NestedEnumCrmPlatformWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CrmPlatform | Prisma.EnumCrmPlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.CrmPlatform[]
+  notIn?: $Enums.CrmPlatform[]
+  not?: Prisma.NestedEnumCrmPlatformWithAggregatesFilter<$PrismaModel> | $Enums.CrmPlatform
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCrmPlatformFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCrmPlatformFilter<$PrismaModel>
 }
 
 export type NestedEnumAppStatusFilter<$PrismaModel = never> = {

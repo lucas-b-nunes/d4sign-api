@@ -1,19 +1,19 @@
 import type { Context } from "hono";
 import { prisma } from "@/lib/db";
 import { d4signPing } from "@/lib/d4sign/client";
-import { findTenantByMemberId, getFirstApp } from "@/lib/tenant";
+import { getTenantIdFromQuery, resolveTenantApp } from "@/lib/tenant";
 
 export async function handleGetD4SignSettings(c: Context) {
-  const memberId = c.req.query("member_id");
-  if (!memberId) {
-    return c.json({ error: "member_id required" }, 400);
+  const tenantId = getTenantIdFromQuery(c);
+  if (!tenantId) {
+    return c.json({ error: "memberId required" }, 400);
   }
 
-  const tenant = await findTenantByMemberId(memberId);
-  const app = tenant ? getFirstApp(tenant) : null;
-  if (!app) {
+  const resolved = await resolveTenantApp(tenantId);
+  if (!resolved) {
     return c.json({ error: "not_found" }, 404);
   }
+  const { app } = resolved;
 
   const cred = app.d4signCredential;
   return c.json({
@@ -26,16 +26,16 @@ export async function handleGetD4SignSettings(c: Context) {
 }
 
 export async function handlePutD4SignSettings(c: Context) {
-  const memberId = c.req.query("member_id");
-  if (!memberId) {
-    return c.json({ error: "member_id required" }, 400);
+  const tenantId = getTenantIdFromQuery(c);
+  if (!tenantId) {
+    return c.json({ error: "memberId required" }, 400);
   }
 
-  const tenant = await findTenantByMemberId(memberId);
-  const app = tenant ? getFirstApp(tenant) : null;
-  if (!app) {
+  const resolved = await resolveTenantApp(tenantId);
+  if (!resolved) {
     return c.json({ error: "not_found" }, 404);
   }
+  const { app } = resolved;
 
   const body = await c.req.json<{
     tokenApi?: string;
@@ -83,9 +83,9 @@ export async function handlePutD4SignSettings(c: Context) {
 }
 
 export async function handleTestD4SignSettings(c: Context) {
-  const memberId = c.req.query("member_id");
-  if (!memberId) {
-    return c.json({ error: "member_id required" }, 400);
+  const tenantId = getTenantIdFromQuery(c);
+  if (!tenantId) {
+    return c.json({ error: "memberId required" }, 400);
   }
 
   let body: { tokenApi?: string; cryptKey?: string } = {};
@@ -95,11 +95,11 @@ export async function handleTestD4SignSettings(c: Context) {
     /* stored */
   }
 
-  const tenant = await findTenantByMemberId(memberId);
-  const app = tenant ? getFirstApp(tenant) : null;
-  if (!app) {
+  const resolved = await resolveTenantApp(tenantId);
+  if (!resolved) {
     return c.json({ error: "not_found" }, 404);
   }
+  const { app } = resolved;
 
   const tokenApi = body.tokenApi?.trim() || app.d4signCredential?.tokenApi;
   const cryptKey = body.cryptKey?.trim() ?? app.d4signCredential?.cryptKey;
